@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
+		sleep(5);
 		printf("Hello! Here rc = %d and pid = %d\n", (int)rc, (int)getpid());
 	}
 	return 0;
