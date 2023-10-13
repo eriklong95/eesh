@@ -1,4 +1,4 @@
-compile `forever.c` and run resulting executable
+compile `print_pid.c` and run resulting executable
 do you get the ouput every time?
 
 modify the program so that it makes multiple calls to `getpid()`
