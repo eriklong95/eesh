@@ -1,9 +1,25 @@
-try running forking_hell.c
-Can you guess what is going on?
-Do you get the same output every time?
-What do you think the numbers mean?
+# Experiment #1: Forking processes
 
-Modify the program by putting in `sleep(5);` in `else` branch
-Modify the program by putting in `sleep(5);` in the `else if (rc == 0)` branch
-What's the difference between doing these two thing?
-Try to find sleep in unistd.h
+## The `fork` system call
+
+Read the **forking_hell.c** source file and
+have a go at guessing what output the program
+will produce.
+
+Compile and run forking_hell.c. Any surprises? 
+Can you explain what is going on?
+
+## Getting there first
+
+The conditional statement that takes up most of
+the lines in **forking_hell.c** has three branches
+which are guarded by the conditions `rc < 0`,
+`rc == 0` and `rc > 0`.
+
+As you have probably already seen, we usually enter
+both the `rc == 0` and the `rc > 0` branch (??#!!?%!).
+We see print statements coming from both of these branches.
+Which of them comes first? Always? Can you modify the program
+to change that?
+
+Under what conditions do we enter the `rc < 0` branch?

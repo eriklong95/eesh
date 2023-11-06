@@ -12,12 +12,10 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "fork failed\n");
 		exit(1);
 	} else if (rc == 0) {
-		// child (new process)
-		printf("Hello, I am child (pid:%d)\n", (int) getpid());
+		printf("Hello, here rc = 0 and pid = %d\n", (int) getpid());
 	} else {
-		// parent (main)
 		int rc_wait = wait(NULL);
-		printf("Hello, I am parent of %d (rc_wait: %d) (pid:%d)\n", rc, rc_wait, (int) getpid());
+		printf("Hello, here rc = %d, rc_wait = %d, and pid = %d\n", rc, rc_wait, (int) getpid());
 	}
 	return 0;
 }

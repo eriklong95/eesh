@@ -28,9 +28,16 @@ The executable can be run using
 ## eesh conventions for locations of executables
 
 For this project, the following convention has been chosen:
-All executables are put in the directory target (on the
-root level). The eesh application directly under target, examples in target/examples.
+All executables are put in the directory **target** (on the
+root level). The executable for the eesh application 
+(i.e. what is built from the code under **src**) is put 
+directly under **target**. Example executables (i.e. stuff 
+built from code in the examples directory) is put
+in **target/examples**.
 
+As an example, the conventional way of compiling
+the `pid_control.c` example source file is by using the
+command
 ```
-gcc examples/print_pid.c -o target/examples/print_pid
+gcc examples/pid_control.c -o target/examples/pid_control
 ```
