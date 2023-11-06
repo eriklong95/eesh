@@ -1,9 +1,10 @@
-compile `print_pid.c` and run resulting executable
-do you get the ouput every time?
+Compile `print_pid.c` and run resulting executable.
+What output do you see?
+Try stopping the program and running it again. Do you get the same output this time?
 
-modify the program so that it makes multiple calls to `getpid()`
-
-modify the program so that it keeps running until interrupted
+Modify the program so that it calls `getpid()` inside of
+the `while` loop and reassigns the variable `pid` with the
+return value. What output does the program produce now?
 
 
 ## `top` and `ps`

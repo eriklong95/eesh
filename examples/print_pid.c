@@ -6,14 +6,11 @@ int main() {
     int pid;
 
     pid = getpid();
-    printf("PID is %d", pid);
 
-    while(getchar() != EOF) {
-        pid = getpid();
-        printf("PID is %d", pid);
+    while(1) {
+        sleep(1);
+        printf("PID is %d\n", pid);
     }
     
-
-
     return 0;
 }
