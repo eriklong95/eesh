@@ -17,8 +17,10 @@ int main(int argc, char *argv[])
 	}
 	else if (rc == 0)
 	{
-		// child (new process)
-		printf("Hello, I am child (pid:%d)\n", (int)getpid());
+		// child process
+		int child_pid;
+		child_pid = getpid();
+		printf("Hello, I am the child process (pid:%d)\n", child_pid);
 
 		char *myargs[3];
 		myargs[0] = strdup("wc");
@@ -30,9 +32,9 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		// parent (main)
+		// parent process
 		int rc_wait = wait(NULL);
-		printf("Hello, I am parent of %d (rc_wait: %d) (pid:%d)\n", rc, rc_wait, (int)getpid());
+		printf("Hello, I am the parent process of %d (rc_wait: %d) (pid:%d)\n", rc, rc_wait, (int)getpid());
 	}
 	return 0;
 }
