@@ -18,9 +18,7 @@ int main(int argc, char *argv[])
 	else if (rc == 0)
 	{
 		// child process
-		int child_pid;
-		child_pid = getpid();
-		printf("Hello, I am the child process (pid:%d)\n", child_pid);
+		printf("Hello, I am the child process (pid:%d)\n", (int)getpid());
 
 		char *myargs[3];
 		myargs[0] = strdup("wc");
