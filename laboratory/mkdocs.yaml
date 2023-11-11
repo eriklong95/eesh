@@ -1,0 +1,15 @@
+site_name: Laboratory
+theme: readthedocs
+nav:
+  - Home: index.md
+  - Experiments:
+    - Introduction: experiments/index.md
+    - Process IDs: experiments/experiment0.md
+    - Forking processes: experiments/experiment1.md
+    - Waiting for a process: experiments/experiment2.md
+    - Executing programs in a process: experiments/experiment3.md
+    - Redirecting output: experiments/experiment4.md
+  - Project: project/eesh.md
+  - Help:
+    - Working with C programs: help/compile-and-run.md
+
