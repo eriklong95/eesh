@@ -7,7 +7,8 @@ have a go at guessing what output the program
 will produce.
 
 Compile and run forking_hell.c. Any surprises? 
-Can you explain what is going on?
+Can you explain what is going on? What is
+the value returned by `fork`?
 
 ## Getting there first
 

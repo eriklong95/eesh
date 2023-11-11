@@ -21,7 +21,7 @@ What do you see? Anything familiar.
 Pick a number from the column `PID` in the table, quit `top`
 and run 
 ```
-ps <PID>
+ps [PID]
 ``` 
 What does the `TIME` column in the output
 of `ps` mean?

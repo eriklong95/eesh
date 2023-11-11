@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 		myargs[2] = NULL;
 
 		execvp(myargs[0], myargs);
-		printf("Will this print statement be executed?");
+		printf("Will this print statement be executed?\n");
 	}
 	else
 	{
