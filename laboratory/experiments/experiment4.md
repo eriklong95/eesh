@@ -14,9 +14,16 @@ this call do? What happens if you exchange `STDOUT_FILENO` for
 In the code, that will be executed by the child process, we call
 `close(STDOUT_FILENO)`. You could argue that this line of code is
 self-explanatory, but what happens concretely? What happens
-with output produced by subsequent calls? E.g. consider the statement
+with output produced by subsequent calls? 
+
+Consider the statement
 ```
 printf("Can anybody hear me?\n");
 ```
 Do you see the output from this call in you terminal window?
 What if you move the statement somewhere else in the code?
+
+The system call `open` returns something. What?
+
+The child process execute `ls -l`. Where does the output go?
+Can you find it?

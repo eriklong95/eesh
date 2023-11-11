@@ -20,8 +20,8 @@ int main(int argc, char *argv[]) {
         printf("Can anybody hear me?\n");
 
         int fd;
-        fd = open("./output.txt", O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
-        
+        fd = open("./target/output.txt", O_CREAT|O_WRONLY|O_TRUNC, S_IRWXU);
+
         char *myargs[3];
         myargs[0] = strdup("ls");
         myargs[1] = strdup("-l");
