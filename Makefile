@@ -20,5 +20,11 @@ OBJS = $(patsubst %,$(OBJDIR)/%,$(_OBJS))
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
+BUILDDIR = ./target
+
 eesh: $(OBJS)
-	$(CC) -o target/$@ $^ $(CFLAGS)
+	$(CC) -o $(BUILDDIR)/$@ $^ $(CFLAGS)
+
+EXAMPLES_SRCDIR = ./examples
+$(EXAMPLES_SRCDIR)/%: $(EXAMPLES_SRCDIR)/%.c
+	$(CC) -o $(BUILDDIR)/$@ $@.c
