@@ -4,12 +4,13 @@ SHELL = /bin/sh
 .SUFFIXES: .c .o
 
 SRCDIR = src
+IDIR = $(SRCDIR)/include
 
-IDIR = ./src/include
 CC = gcc
 CFLAGS = -I$(IDIR)
 
-OBJDIR = ./obj
+BUILDDIR = ./build
+OBJDIR = $(BUILDDIR)/app/objects
 
 _DEPS = user_input.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
@@ -20,10 +21,8 @@ OBJS = $(patsubst %,$(OBJDIR)/%,$(_OBJS))
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-BUILDDIR = ./target
-
 eesh: $(OBJS)
-	$(CC) -o $(BUILDDIR)/$@ $^ $(CFLAGS)
+	$(CC) -o $(BUILDDIR)/app/$@ $^ $(CFLAGS)
 
 EXAMPLES_SRCDIR = ./examples
 $(EXAMPLES_SRCDIR)/%: $(EXAMPLES_SRCDIR)/%.c
