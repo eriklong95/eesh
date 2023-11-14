@@ -3,7 +3,7 @@ SHELL = /bin/sh
 .SUFFIXES:
 .SUFFIXES: .c .o
 
-SRCDIR = src
+SRCDIR = ./src
 IDIR = $(SRCDIR)/include
 
 CC = gcc
@@ -14,18 +14,25 @@ APP_BUILDDIR = $(BUILDDIR)/app
 OBJDIR = $(APP_BUILDDIR)/objects
 
 DEPS := $(wildcard $(IDIR)/*.h)
-
 OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(wildcard $(SRCDIR)/*.c))
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
 
 eesh: $(OBJS)
 	$(CC) -o $(APP_BUILDDIR)/$@ $^ $(CFLAGS)
 
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEPS) | $(OBJDIR)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
 EXAMPLES_SRCDIR = ./examples
-$(EXAMPLES_SRCDIR)/%: $(EXAMPLES_SRCDIR)/%.c
+EXAMPLES_BUILDDIR = $(BUILDDIR)/examples
+
+$(EXAMPLES_SRCDIR)/%: $(EXAMPLES_SRCDIR)/%.c | $(EXAMPLES_BUILDDIR)
 	$(CC) -o $(BUILDDIR)/$@ $@.c
+
+$(EXAMPLES_BUILDDIR):
+	mkdir -p $(EXAMPLES_BUILDDIR)
 
 .PHONY: clean
 clean:
