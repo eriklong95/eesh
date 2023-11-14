@@ -13,7 +13,7 @@ int main()
 	CommandLine *cli;
 	cli = parse(input);
 
-	printf("unknown command, %s\n", cli->executable);
+	printf("unknown command: %s\n", cli->executable);
 	printf("eesh/>\n");
 
 	return 0;

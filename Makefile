@@ -10,7 +10,8 @@ CC = gcc
 CFLAGS = -I$(IDIR)
 
 BUILDDIR = ./build
-OBJDIR = $(BUILDDIR)/app/objects
+APP_BUILDDIR = $(BUILDDIR)/app
+OBJDIR = $(APP_BUILDDIR)/objects
 
 _DEPS = user_input.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
@@ -22,7 +23,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 eesh: $(OBJS)
-	$(CC) -o $(BUILDDIR)/app/$@ $^ $(CFLAGS)
+	$(CC) -o $(APP_BUILDDIR)/$@ $^ $(CFLAGS)
 
 EXAMPLES_SRCDIR = ./examples
 $(EXAMPLES_SRCDIR)/%: $(EXAMPLES_SRCDIR)/%.c
