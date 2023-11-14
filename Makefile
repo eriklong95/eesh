@@ -13,11 +13,9 @@ BUILDDIR = ./build
 APP_BUILDDIR = $(BUILDDIR)/app
 OBJDIR = $(APP_BUILDDIR)/objects
 
-_DEPS = user_input.h
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
+DEPS := $(wildcard $(IDIR)/*.h)
 
-_OBJS = main.o user_input.o
-OBJS = $(patsubst %,$(OBJDIR)/%,$(_OBJS))
+OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(wildcard $(SRCDIR)/*.c))
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -32,3 +30,9 @@ $(EXAMPLES_SRCDIR)/%: $(EXAMPLES_SRCDIR)/%.c
 .PHONY: clean
 clean:
 	rm -r $(BUILDDIR)
+
+printdeps:
+	echo $(DEPS)
+
+printobjs:
+	echo $(OBJS)
