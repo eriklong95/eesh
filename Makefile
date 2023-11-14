@@ -28,3 +28,6 @@ eesh: $(OBJS)
 EXAMPLES_SRCDIR = ./examples
 $(EXAMPLES_SRCDIR)/%: $(EXAMPLES_SRCDIR)/%.c
 	$(CC) -o $(BUILDDIR)/$@ $@.c
+
+clean:
+	rm -r $(BUILDDIR)

@@ -14,7 +14,6 @@ int main()
 	cli = parse(input);
 
 	printf("unknown command: %s\n", cli->executable);
-	printf("eesh/>\n");
 
 	return 0;
 }
