@@ -12,3 +12,4 @@ nav:
   - Project: project/eesh.md
   - Help:
       - Working with C programs: help/compile-and-run.md
+      - Using make: help/using-make.md
