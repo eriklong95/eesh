@@ -3,9 +3,9 @@
 This is the place for exploring UNIX system calls
 through experiments.
 
-To learn and increase your knowledge, carry out some [experiments](experiments/index.md).
+To have fun while increasing your knowledge, carry out some [experiments](experiments/index.md).
 
-If you need it along the way, it is possible to get 
+If you need it along the way, it is possible to get
 [help](help/compile-and-run.md).
 
 When you have gained experience, you may want to take

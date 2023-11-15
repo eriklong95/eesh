@@ -38,8 +38,6 @@ $(EXAMPLES_BUILDDIR):
 clean:
 	rm -r $(BUILDDIR)
 
-printdeps:
-	echo $(DEPS)
-
-printobjs:
-	echo $(OBJS)
+.PHONY: run
+run: eesh
+	$(APP_BUILDDIR)/eesh
