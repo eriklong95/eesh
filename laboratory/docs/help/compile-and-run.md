@@ -1,43 +1,34 @@
 # Compiling and running C programs
 
-## Using the `gcc` command
+To compile the C source file **program.c**, run the command
 
-To compile program.c, run the command
 ```
 gcc program.c
 ```
-for the directory where program.c is located. This produces
-an executable file.
+
+from the directory where program.c is located.
+This produces an executable file.
 
 To control the name and location of the executable being
-produced by the compilation process, use the `-o` option
+produced, use the `-o` option
 like so
+
 ```
 gcc program.c -o my-favourite-place/my-executable
 ```
+
 The executable will get the name `my-executable` and it will
-be placed in the `my-favourite-place` directory (which in 
-this case must a sub-directory of the parent directory 
-of program.c).
+be placed in the `my-favourite-place` directory (which in
+this case must a sub-directory of the parent directory
+of **program.c**).
 
 The executable can be run using
+
 ```
 ./my-favourite-place/my-executable
 ```
 
-## eesh conventions for locations of executables
-
-For this project, the following convention has been chosen:
-All executables are put in the directory **target** (on the
-root level). The executable for the eesh application 
-(i.e. what is built from the code under **src**) is put 
-directly under **target**. Example executables (i.e. stuff 
-built from code in the examples directory) is put
-in **target/examples**.
-
-As an example, the conventional way of compiling
-the `pid_control.c` example source file is by using the
-command
-```
-gcc examples/pid_control.c -o target/examples/pid_control
-```
+If you have read this far, you have all you need to get
+started working with the experiments. Read on [here](using-make.md), if you
+want some hints on using the `make` utility for this
+project.

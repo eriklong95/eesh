@@ -1,13 +1,19 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int main() {
-	char *line;
+#include "include/user_input.h"
+
+int main()
+{
+	char input[1000];
 
 	printf("eesh/> ");
-	fgets(line, 100, stdin);
-	printf("%s", line);
-	printf("eesh/>\n");
+	fgets(input, 100, stdin);
+
+	CommandLine *cli;
+	cli = parse(input);
+
+	printf("unknown command: %s\n", cli->executable);
 
 	return 0;
 }
-
