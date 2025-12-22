@@ -1,3 +1,5 @@
+CC = gcc
+
 SRC := ./src
 BUILD := ./build
 OBJ := $(BUILD)/obj
@@ -5,7 +7,7 @@ OBJ := $(BUILD)/obj
 SRCS := $(wildcard $(SRC)/*.c)
 OBJS := $($(SRCS):$(SRC)/%.c=$(OBJ)/%.o)
 
-eesh: $(OBJS)
+$(BUILD)/eesh: $(OBJ)/csapp.o $(OBJ)/lib.o $(OBJ)/main.o
 	$(CC) -o $@ $^
 
 $(OBJ)/%.o: $(SRC)/%.c $(OBJ)
@@ -20,4 +22,8 @@ $(BUILD):
 .PHONY: clean
 clean:
 	rm -r $(BUILD)
+
+.PHONY: run
+run: $(BUILD)/eesh
+	$<
 
