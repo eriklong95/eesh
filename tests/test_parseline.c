@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "eesh.h"
+#include "../src/lib.h"
 
 int main() {
   char *argv[8];

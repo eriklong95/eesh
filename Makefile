@@ -3,9 +3,8 @@ CC = gcc
 SRC := ./src
 BUILD := ./build
 OBJ := $(BUILD)/obj
-
-SRCS := $(wildcard $(SRC)/*.c)
-OBJS := $($(SRCS):$(SRC)/%.c=$(OBJ)/%.o)
+TESTS := ./tests
+BUILD_TEST := $(BUILD)/tests
 
 $(BUILD)/eesh: $(OBJ)/csapp.o $(OBJ)/lib.o $(OBJ)/main.o
 	$(CC) -o $@ $^
@@ -18,6 +17,12 @@ $(OBJ): $(BUILD)
 
 $(BUILD):
 	mkdir -p $(BUILD)
+
+$(BUILD_TEST)/%: $(TESTS)/%.c $(OBJ)/csapp.o $(OBJ)/lib.o $(BUILD_TEST)
+	$(CC) -o $@ $(OBJ)/csapp.o $(OBJ)/lib.o $<
+
+$(BUILD_TEST):
+	mkdir -p $(BUILD_TEST)
 
 .PHONY: clean
 clean:
