@@ -1,10 +1,19 @@
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 #include "../src/lib.h"
 
 int main() {
-  char *argv[8];
-  int bg = parseline("ls\n", argv);
+  char *argv[] = { "asdf", "asdf" };
+  char *buf = calloc(sizeof(char), 3);
+
+  buf[0] = 'l';
+  buf[1] = 's';
+  buf[2] = '\n';
+ 
+  int bg = parseline(buf, argv);
 
   assert(!bg);
+  assert(!strcmp("ls", argv[0]));
   
 }

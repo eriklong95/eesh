@@ -7,6 +7,8 @@ int parseline(char *buf, char **argv) {
   int argc;
   int bg;
 
+  unsigned long length = strlen(buf);
+  *(buf + (length-1)) = ' ';
   while (*buf && (*buf == ' ')) {
     buf++;
   }
