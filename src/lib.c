@@ -26,6 +26,10 @@ int parseline(char *buf, char **argv) {
     return 1;
   }
 
+  if ((bg = (*argv[argc-1] == '&') != 0)) {
+    argv[--argc] = NULL;
+  }
+
   return bg;
 
 }
