@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../src/lib.h"
+#include "../lib/lib.h"
 
 int main() {
   char *argv[] = { "asdf", "asdf" };

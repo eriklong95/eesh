@@ -1,34 +1,40 @@
 CC = gcc
 
 SRCDIR := src
+SRCDIR_LIB := $(SRCDIR)/lib
 BUILDDIR := build
 OBJDIR := $(BUILDDIR)/obj
-TESTDIR := tests
-BUILDDIR_TEST := $(BUILDDIR)/tests
+OBJDIR_LIB := $(OBJDIR)/lib
+TESTDIR := $(SRCDIR)/test
+BUILDDIR_TEST := $(BUILDDIR)/test
 
-objects := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(wildcard $(SRCDIR)/*.c))
+lib_objects := $(patsubst $(SRCDIR_LIB)/%.c,$(OBJDIR_LIB)/%.o,$(wildcard $(SRCDIR_LIB)/*.c))
+tests := $(patsubst $(TESTDIR)/%.c,$(BUILDDIR_TEST)/%,$(wildcard $(TESTDIR)/*.c))
 
-$(BUILDDIR)/eesh: $(objects) | $(BUILDDIR)
+$(BUILDDIR)/eesh: $(SRCDIR)/main.c $(lib_objects) | $(BUILDDIR)
 	$(CC) -g -o $@ $^
 
-$(objects): $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+$(lib_objects): $(OBJDIR_LIB)/%.o: $(SRCDIR_LIB)/%.c | $(OBJDIR_LIB)
 	$(CC) -g -c -o $@ $^
 
+$(OBJDIR_LIB): $(OBJDIR)
+	mkdir -p $@
+
 $(OBJDIR): $(BUILDDIR)
-	mkdir -p $(OBJDIR)
+	mkdir -p $@
 
 $(BUILDDIR):
-	mkdir -p $(BUILDDIR)
+	mkdir -p $@
 
-$(BUILDDIR_TEST)/%: $(TESTDIR)/%.c $(OBJDIR)/csapp.o $(OBJDIR)/lib.o $(BUILDDIR_TEST)
-	$(CC) -g -o $@ $(OBJDIR)/csapp.o $(OBJDIR)/lib.o $<
+$(tests): $(BUILDDIR_TEST)/%: $(TESTDIR)/%.c $(lib_objects) | $(BUILDDIR_TEST)
+	$(CC) -g -o $@ $^
 
 $(BUILDDIR_TEST):
 	mkdir -p $(BUILDDIR_TEST)
 
 .PHONY: clean
 clean:
-	rm -r $(BUILDDIR)
+	rm -fr $(BUILDDIR)
 
 .PHONY: run
 run: $(BUILDDIR)/eesh

@@ -1,5 +1,5 @@
-#include "csapp.h"
-#include "lib.h"
+#include "lib/csapp.h"
+#include "lib/lib.h"
 
 int main() {
   char cmdline[MAXLINE];
