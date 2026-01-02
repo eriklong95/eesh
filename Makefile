@@ -40,3 +40,5 @@ clean:
 run: $(BUILDDIR)/eesh
 	$<
 
+.PHONY: test
+test: $(tests)
