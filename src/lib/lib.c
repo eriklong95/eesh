@@ -44,6 +44,10 @@ int builtin_command(char **argv) {
   return 0;
 }
 
+void sigint_handler(int sig) {
+  Sio_puts("(will send SIGINT to all processes in foreground process group)\n");
+}
+
 void eval(char *cmdline) {
   char *argv[MAXARGS];
   char buf[MAXLINE];

@@ -4,6 +4,8 @@
 int main() {
   char cmdline[MAXLINE];
 
+  Signal(SIGINT, sigint_handler);
+
   while (1) {
     printf(">");
     Fgets(cmdline, MAXLINE, stdin);
