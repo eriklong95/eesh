@@ -2,7 +2,7 @@
 #include <string.h>
 #define MAXARGS 128
 
-pid_t fg_pid;
+pid_t fg_pgid;
 
 int parseline(char *buf, char **argv) {
   char *delim;
@@ -47,12 +47,14 @@ int builtin_command(char **argv) {
 }
 
 void sigint_handler(int sig) {
+  if (fg_pgid != 0) {
+    Kill(fg_pgid, SIGINT);
+  }
   Sio_puts("\n");
-  Kill(fg_pid, SIGINT);
 }
 
-void setfgpid(pid_t pid) {
-  fg_pid = pid;
+void set_fg_pgid(pid_t pid) {
+  fg_pgid = pid;
 }
 
 void prepare(char *cmdline, char **argv, int *bg) {
@@ -86,7 +88,7 @@ void eval(char *cmdline) {
     }
 
     if (!bg) {
-      setfgpid(pid);
+      set_fg_pgid(pid);
       int status;
       if (waitpid(pid, &status, 0) < 0) {
         unix_error("waitfg: waitpid error");
