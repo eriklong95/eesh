@@ -56,15 +56,9 @@ void eval(char *cmdline) {
     return;
   }
 
-  pid_t p_pid = getpid();
-  printf("Parent process ID is %d\n", p_pid);
-
   if (!builtin_command(argv)) {
     if ((pid = Fork()) == 0) {
       setpgid(getpid(), getpid());
-      pid_t ch_pid = getpid();
-      pid_t pgrp = getpgrp();
-      printf("Child process ID is %d, process group ID is %d\n", ch_pid, pgrp);
       if (execve(argv[0], argv, environ) < 0) {
         printf("%s: Command not found.\n", argv[0]);
         exit(0);
