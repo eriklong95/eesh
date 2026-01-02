@@ -45,7 +45,7 @@ int builtin_command(char **argv) {
 
 void sigint_handler(int sig) {
   if (fg_pgid != 0) {
-    Kill(fg_pgid, SIGINT);
+    Kill(-fg_pgid, SIGINT);
   }
   Sio_puts("\n");
 }
