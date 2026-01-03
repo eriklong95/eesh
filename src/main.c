@@ -5,6 +5,7 @@ int main() {
   char cmdline[MAXLINE];
 
   Signal(SIGINT, sigint_handler);
+  Signal(SIGTSTP, sigtstp_handler);
 
   while (1) {
     printf(">");
@@ -16,6 +17,5 @@ int main() {
 
     eval(cmdline);
   }
-  
-}
 
+}
