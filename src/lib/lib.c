@@ -1,4 +1,6 @@
 #include "csapp.h"
+#include <signal.h>
+#include <stdlib.h>
 #include <string.h>
 #define MAXARGS 128
 
@@ -50,15 +52,19 @@ void sigint_handler(int sig) {
 }
 
 void sigtstp_handler(int sig) {
-  Sio_puts("in SIGTSTP handler\n");
   if (fg_pgid != 0) {
-    Sio_puts("fg_pgid is ");
+    Kill(-fg_pgid, SIGTSTP);
+    Sio_puts("Stopped ");
     Sio_putl(fg_pgid);
     Sio_puts("\n");
-    Kill(-fg_pgid, SIGTSTP);
-    Sio_puts("Stopped");
+    fg_pgid = 0;
   }
   Sio_puts("\n");
+}
+
+void install_signal_handlers() {
+  Signal(SIGINT, sigint_handler);
+  Signal(SIGTSTP, sigtstp_handler);
 }
 
 void set_fg_pgid(pid_t pid) { fg_pgid = pid; }
@@ -69,7 +75,7 @@ void prepare(char *cmdline, char **argv, int *bg) {
   *bg = parseline(buf, argv);
 }
 
-pid_t exec(char **argv) {
+pid_t execute(char **argv) {
   pid_t pid = Fork();
   if (pid == 0) {
     setpgid(getpid(), getpid());
@@ -82,7 +88,7 @@ pid_t exec(char **argv) {
   }
 }
 
-void eval(char *cmdline) {
+void evaluate(char *cmdline) {
   char *argv[MAXARGS];
   int bg;
 
@@ -92,12 +98,12 @@ void eval(char *cmdline) {
     return;
   }
 
-  pid_t pid = exec(argv);
+  pid_t pid = execute(argv);
 
   if (!bg) {
     set_fg_pgid(pid);
     int status;
-    if (waitpid(pid, &status, 0) < 0) {
+    if (waitpid(pid, &status, WUNTRACED) < 0) {
       unix_error("waitfg: waitpid error");
     }
   } else {
@@ -105,4 +111,15 @@ void eval(char *cmdline) {
   }
 
   return;
+}
+
+void read_and_evaluate(char *cmdline) {
+  printf(">");
+  Fgets(cmdline, MAXLINE, stdin);
+
+  if (feof(stdin)) {
+    exit(0);
+  }
+
+  evaluate(cmdline);
 }

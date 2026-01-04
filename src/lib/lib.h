@@ -1,5 +1,4 @@
-void eval(char *cmdline);
 int parseline(char *buf, char **argv);
 int builtin_command(char **argv);
-void sigint_handler(int sig);
-void sigtstp_handler(int sig);
+void install_signal_handlers();
+void read_and_evaluate(char *);
