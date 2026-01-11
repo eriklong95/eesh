@@ -1,41 +1,11 @@
 #include "csapp.h"
+#include "input.h"
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 #define MAXARGS 128
 
 pid_t fg_pgid; // volatile ??
-
-int parseline(char *buf, char **argv) {
-  char *delim;
-  int argc;
-  int bg;
-
-  unsigned long length = strlen(buf);
-  *(buf + (length - 1)) = ' ';
-  while (*buf && (*buf == ' ')) {
-    buf++;
-  }
-
-  argc = 0;
-  while ((delim = strchr(buf, ' '))) {
-    argv[argc++] = buf;
-    *delim = '\0';
-    buf = delim + 1;
-  }
-
-  argv[argc] = NULL;
-
-  if (argc == 0) {
-    return 1;
-  }
-
-  if ((bg = (*argv[argc - 1] == '&') != 0)) {
-    argv[--argc] = NULL;
-  }
-
-  return bg;
-}
 
 int builtin_command(char **argv) {
   if (!strcmp(argv[0], "quit")) {
@@ -69,12 +39,6 @@ void install_signal_handlers() {
 
 void set_fg_pgid(pid_t pid) { fg_pgid = pid; }
 
-void prepare(char *cmdline, char **argv, int *bg) {
-  char buf[MAXLINE];
-  strcpy(buf, cmdline);
-  *bg = parseline(buf, argv);
-}
-
 pid_t execute(char **argv) {
   pid_t pid = Fork();
   if (pid == 0) {
@@ -92,7 +56,7 @@ void evaluate(char *cmdline) {
   char *argv[MAXARGS];
   int bg;
 
-  prepare(cmdline, argv, &bg);
+  parse_input(cmdline, argv, &bg);
 
   if (argv[0] == NULL || builtin_command(argv)) {
     return;
