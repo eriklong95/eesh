@@ -1,15 +1,26 @@
 #include "csapp.h"
 #include "input.h"
+#include "job.h"
 #include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define MAXARGS 128
 
 pid_t fg_pgid; // volatile ??
 
-int builtin_command(char **argv) {
+int builtin_command(char **argv, struct JobList *jobs) {
   if (!strcmp(argv[0], "quit")) {
     exit(0);
+  } else if (!strcmp(argv[0], "jobs")) {
+    printf("Jobs\n");
+
+    struct JobList *p = jobs;
+    while (p != NULL) {
+      printf("[%d] %d", p->head.jid, p->head.pid);
+      p = p->tail;
+    }
+    return 1;
   }
   return 0;
 }
@@ -52,17 +63,19 @@ pid_t execute(char **argv) {
   }
 }
 
-void evaluate(char *cmdline) {
+void evaluate(char *cmdline, struct JobList *jobs) {
   char *argv[MAXARGS];
   int bg;
 
   parse_input(cmdline, argv, &bg);
 
-  if (argv[0] == NULL || builtin_command(argv)) {
+  if (argv[0] == NULL || builtin_command(argv, jobs)) {
     return;
   }
 
   pid_t pid = execute(argv);
+
+  register_job(jobs, pid, bg);
 
   if (!bg) {
     set_fg_pgid(pid);
@@ -77,7 +90,7 @@ void evaluate(char *cmdline) {
   return;
 }
 
-void read_and_evaluate(char *cmdline) {
+void read_and_evaluate(char *cmdline, struct JobList *jobs) {
   printf(">");
   Fgets(cmdline, MAXLINE, stdin);
 
@@ -85,5 +98,5 @@ void read_and_evaluate(char *cmdline) {
     exit(0);
   }
 
-  evaluate(cmdline);
+  evaluate(cmdline, jobs);
 }
