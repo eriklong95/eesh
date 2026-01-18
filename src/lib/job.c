@@ -1,4 +1,5 @@
 #include "job.h"
+#include <stdio.h>
 #include <sys/types.h>
 
 int register_job(struct JobList *jobs, pid_t pid, int bg) {
@@ -13,15 +14,9 @@ int register_job(struct JobList *jobs, pid_t pid, int bg) {
 }
 
 void append(struct JobList *jobs, struct Job job) {
-  struct JobList end;
-  end.head = job;
-  end.tail = NULL;
+  struct JobList *end = malloc(sizeof(struct JobList));
+  end->head = job;
+  end->tail = NULL;
 
-  // find the end of the list
-  struct JobList *p = jobs;
-  while (p != NULL) {
-    p = p->tail;
-  }
-
-  *p = end;
+  jobs = end;
 }
