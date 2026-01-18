@@ -14,6 +14,6 @@ struct JobList {
   struct JobList *tail;
 };
 
-void append(struct JobList *list, struct Job job);
+void append(struct JobList **, struct Job);
 
-int register_job(struct JobList *jobs, pid_t pid, int bg);
+int register_job(struct JobList **, pid_t, int);

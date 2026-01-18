@@ -9,18 +9,9 @@
 
 pid_t fg_pgid; // volatile ??
 
-int builtin_command(char **argv, struct JobList *jobs) {
+int builtin_command(char **argv) {
   if (!strcmp(argv[0], "quit")) {
     exit(0);
-  } else if (!strcmp(argv[0], "jobs")) {
-    printf("Jobs\n");
-
-    struct JobList *p = jobs;
-    while (p != NULL) {
-      printf("[%d] %d", p->head.jid, p->head.pid);
-      p = p->tail;
-    }
-    return 1;
   }
   return 0;
 }
@@ -63,13 +54,13 @@ pid_t execute(char **argv) {
   }
 }
 
-void evaluate(char *cmdline, struct JobList *jobs) {
+void evaluate(char *cmdline, struct JobList **jobs) {
   char *argv[MAXARGS];
   int bg;
 
   parse_input(cmdline, argv, &bg);
 
-  if (argv[0] == NULL || builtin_command(argv, jobs)) {
+  if (argv[0] == NULL || builtin_command(argv)) {
     return;
   }
 
@@ -90,7 +81,7 @@ void evaluate(char *cmdline, struct JobList *jobs) {
   return;
 }
 
-void read_and_evaluate(char *cmdline, struct JobList *jobs) {
+void read_and_evaluate(char *cmdline, struct JobList **jobs) {
   printf(">");
   Fgets(cmdline, MAXLINE, stdin);
 

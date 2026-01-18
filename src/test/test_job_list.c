@@ -9,7 +9,7 @@ int main() {
 
   pid_t pid = 13354;
   int bg = 1;
-  register_job(jobs, pid, bg);
+  register_job(&jobs, pid, bg);
 
   assert(jobs->head.pid == 13354);
   printf("first job registered correctly\n");
