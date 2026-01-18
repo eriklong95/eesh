@@ -11,6 +11,13 @@ int main() {
   int bg = 1;
   register_job(&jobs, pid, bg);
 
+  pid = 13355;
+  bg = 1;
+  register_job(&jobs, pid, bg);
+
   assert(jobs->head.pid == 13354);
   printf("first job registered correctly\n");
+
+  assert(jobs->tail->head.pid == 13355);
+  printf("second job registered correctly\n");
 }

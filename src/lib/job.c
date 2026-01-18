@@ -18,5 +18,13 @@ void append(struct JobList **jobs, struct Job job) {
   end->head = job;
   end->tail = NULL;
 
-  *jobs = end;
+  if (*jobs == NULL) {
+    // the list is empty
+    // insert new element as first one
+    *jobs = end;
+  } else if ((*jobs)->tail == NULL) {
+    // the list has only one element
+    // insert new element as second one
+    (*jobs)->tail = end;
+  }
 }
