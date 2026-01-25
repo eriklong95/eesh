@@ -62,7 +62,23 @@ void test_list_jobs() {
   printf("*** test_list_jobs PASSED ***\n");
 }
 
+void test_jids() {
+  printf("*** test_jids STARTED ***\n");
+  struct JobList *jobs = NULL;
+
+  pid_t first_pid = 13420;
+  int first_jid = register_job(&jobs, first_pid, 1);
+  assert(first_jid == 1);
+
+  pid_t second_pid = 13421;
+  int second_jid = register_job(&jobs, second_pid, 1);
+  assert(second_jid == 2);
+
+  printf("*** test_jids PASSED ***\n");
+}
+
 int main() {
   test_register_jobs();
   test_list_jobs();
+  test_jids();
 }

@@ -15,11 +15,25 @@ struct JobList *append(struct JobList *jobs, struct Job job) {
   }
 }
 
+int next_jid(struct JobList *jobs) {
+  int jid = 0;
+  while (jobs != NULL) {
+    if (jobs->head.jid > jid) {
+      jid = jobs->head.jid;
+    }
+    jobs = jobs->tail;
+  }
+
+  return jid + 1;
+}
+
 int register_job(struct JobList **jobs, pid_t pid, int bg) {
+  int jid = next_jid(*jobs);
+
   struct Job job;
   job.pid = pid;
   job.bg = bg;
-  job.jid = 1;
+  job.jid = jid;
 
   *jobs = append(*jobs, job);
 
