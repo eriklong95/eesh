@@ -26,11 +26,11 @@ int register_job(struct JobList **jobs, pid_t pid, int bg) {
   return job.jid;
 }
 
-void print_job_list(struct JobList *jobs) {
-  printf("Jobs:\n");
-  printf("[JID] PID\n");
+void write_job_list(struct JobList *jobs, FILE *stream) {
+  fprintf(stream, "Jobs:\n");
+  fprintf(stream, "[JID] PID\n");
   while (jobs != NULL) {
-    printf("[%d] %d \n", jobs->head.jid, jobs->head.pid);
+    fprintf(stream, "[%d] %d\n", jobs->head.jid, jobs->head.pid);
     jobs = jobs->tail;
   }
 }

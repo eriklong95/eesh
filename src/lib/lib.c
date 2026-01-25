@@ -13,7 +13,7 @@ int builtin_command(char **argv, struct JobList *jobs) {
   if (!strcmp(argv[0], "quit")) {
     exit(0);
   } else if (!strcmp(argv[0], "jobs")) {
-    print_job_list(jobs);
+    write_job_list(jobs, stdout);
     return 1;
   }
   return 0;

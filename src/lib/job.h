@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -14,6 +15,8 @@ struct JobList {
   struct JobList *tail;
 };
 
+// returns JID
 int register_job(struct JobList **, pid_t, int);
 
-void print_job_list(struct JobList *);
+// write to the stream
+void write_job_list(struct JobList *, FILE *stream);
