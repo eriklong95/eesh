@@ -9,9 +9,17 @@
 
 pid_t fg_pgid; // volatile ??
 
-int builtin_command(char **argv) {
+int builtin_command(char **argv, struct JobList *jobs) {
   if (!strcmp(argv[0], "quit")) {
     exit(0);
+  } else if (!strcmp(argv[0], "jobs")) {
+    printf("Jobs:\n");
+    printf("[JID] PID\n");
+    while (jobs != NULL) {
+      printf("[%d] %d \n", jobs->head.jid, jobs->head.pid);
+      jobs = jobs->tail;
+    }
+    return 1;
   }
   return 0;
 }
@@ -60,7 +68,7 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 
   parse_input(cmdline, argv, &bg);
 
-  if (argv[0] == NULL || builtin_command(argv)) {
+  if (argv[0] == NULL || builtin_command(argv, *jobs)) {
     return;
   }
 
