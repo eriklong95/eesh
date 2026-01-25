@@ -13,12 +13,7 @@ int builtin_command(char **argv, struct JobList *jobs) {
   if (!strcmp(argv[0], "quit")) {
     exit(0);
   } else if (!strcmp(argv[0], "jobs")) {
-    printf("Jobs:\n");
-    printf("[JID] PID\n");
-    while (jobs != NULL) {
-      printf("[%d] %d \n", jobs->head.jid, jobs->head.pid);
-      jobs = jobs->tail;
-    }
+    print_job_list(jobs);
     return 1;
   }
   return 0;

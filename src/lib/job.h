@@ -15,3 +15,5 @@ struct JobList {
 };
 
 int register_job(struct JobList **, pid_t, int);
+
+void print_job_list(struct JobList *);
