@@ -18,31 +18,6 @@ int builtin_command(char **argv, struct JobList *jobs) {
   return 0;
 }
 
-void sigint_handler(int sig) {
-  pid_t fg = get_fg_pgid();
-  if (fg != 0) {
-    Kill(-fg, SIGINT);
-  }
-  Sio_puts("\n");
-}
-
-void sigtstp_handler(int sig) {
-  pid_t fg = get_fg_pgid();
-  if (fg != 0) {
-    Kill(-fg, SIGTSTP);
-    Sio_puts("Stopped ");
-    Sio_putl(fg);
-    Sio_puts("\n");
-    set_fg_pgid(0);
-  }
-  Sio_puts("\n");
-}
-
-void install_signal_handlers() {
-  Signal(SIGINT, sigint_handler);
-  Signal(SIGTSTP, sigtstp_handler);
-}
-
 pid_t execute(char **argv) {
   pid_t pid = Fork();
   if (pid == 0) {
