@@ -1,4 +1,5 @@
 #include "csapp.h"
+#include "fg.h"
 #include "input.h"
 #include "job.h"
 #include <signal.h>
@@ -6,12 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAXARGS 128
-
-pid_t fg_pgid; // volatile ??
-
-pid_t get_fg_pgid() { return fg_pgid; }
-
-void set_fg_pgid(pid_t pid) { fg_pgid = pid; }
 
 int builtin_command(char **argv, struct JobList *jobs) {
   if (!strcmp(argv[0], "quit")) {
