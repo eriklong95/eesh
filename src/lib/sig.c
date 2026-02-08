@@ -2,7 +2,19 @@
 #include "fg.h"
 #include <signal.h>
 
-void sigchld_handler(int sig) { Sio_puts("A child stopped or terminated"); }
+void sigchld_handler(int sig) {
+  int olderrno = errno;
+  pid_t pid;
+
+  while ((pid = waitpid(-1, NULL, 0)) > 0) {
+    Sio_puts("child process with pid=");
+    Sio_putl(pid);
+  }
+  if (errno != ECHILD) {
+    sio_error("waitpid error");
+  }
+  errno = olderrno;
+}
 
 void sigint_handler(int sig) {
   pid_t fg = get_fg_pgid();
