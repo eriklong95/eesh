@@ -9,6 +9,10 @@
 
 pid_t fg_pgid; // volatile ??
 
+pid_t get_fg_pgid() { return fg_pgid; }
+
+void set_fg_pgid(pid_t pid) { fg_pgid = pid; }
+
 int builtin_command(char **argv, struct JobList *jobs) {
   if (!strcmp(argv[0], "quit")) {
     exit(0);
@@ -20,19 +24,21 @@ int builtin_command(char **argv, struct JobList *jobs) {
 }
 
 void sigint_handler(int sig) {
-  if (fg_pgid != 0) {
-    Kill(-fg_pgid, SIGINT);
+  pid_t fg = get_fg_pgid();
+  if (fg != 0) {
+    Kill(-fg, SIGINT);
   }
   Sio_puts("\n");
 }
 
 void sigtstp_handler(int sig) {
-  if (fg_pgid != 0) {
-    Kill(-fg_pgid, SIGTSTP);
+  pid_t fg = get_fg_pgid();
+  if (fg != 0) {
+    Kill(-fg, SIGTSTP);
     Sio_puts("Stopped ");
-    Sio_putl(fg_pgid);
+    Sio_putl(fg);
     Sio_puts("\n");
-    fg_pgid = 0;
+    set_fg_pgid(0);
   }
   Sio_puts("\n");
 }
@@ -41,8 +47,6 @@ void install_signal_handlers() {
   Signal(SIGINT, sigint_handler);
   Signal(SIGTSTP, sigtstp_handler);
 }
-
-void set_fg_pgid(pid_t pid) { fg_pgid = pid; }
 
 pid_t execute(char **argv) {
   pid_t pid = Fork();
