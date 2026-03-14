@@ -48,3 +48,17 @@ void write_job_list(struct JobList *jobs, FILE *stream) {
     jobs = jobs->tail;
   }
 }
+
+struct JobList *remove_j(struct JobList *jobs, pid_t pid) {
+  if (jobs->head.pid == pid) {
+    return jobs->tail;
+  } else {
+    struct JobList *updated_tail = remove_j(jobs->tail, pid);
+    jobs->tail = updated_tail;
+    return jobs;
+  }
+}
+
+int remove_job(struct JobList **jobs, pid_t pid) {
+  *jobs = remove_j(*jobs, pid);
+}

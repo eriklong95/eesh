@@ -5,6 +5,27 @@
 #include <string.h>
 #include <sys/types.h>
 
+void test_remove_job() {
+  printf("*** test_remove_job STARTED ***\n");
+
+  struct JobList *jobs = NULL;
+
+  pid_t pid = 13354;
+  int bg = 1;
+  register_job(&jobs, pid, bg);
+
+  pid = 13355;
+  bg = 1;
+  register_job(&jobs, pid, bg);
+
+  remove_job(&jobs, 13354);
+
+  assert(jobs->head.pid == 13355);
+  printf("job was removed\n");
+
+  printf("*** test_register_jobs PASSED ***\n");
+}
+
 void test_register_jobs() {
   printf("*** test_register_jobs STARTED ***\n");
 
@@ -78,6 +99,7 @@ void test_jids() {
 }
 
 int main() {
+  test_remove_job();
   test_register_jobs();
   test_list_jobs();
   test_jids();

@@ -2,7 +2,6 @@
 #include "fg.h"
 #include "input.h"
 #include "job.h"
-#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

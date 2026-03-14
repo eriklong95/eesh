@@ -20,3 +20,5 @@ int register_job(struct JobList **, pid_t, int);
 
 // write to the stream
 void write_job_list(struct JobList *, FILE *stream);
+
+int remove_job(struct JobList **, pid_t);
