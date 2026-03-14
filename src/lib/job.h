@@ -7,6 +7,7 @@ struct Job {
   pid_t pid; // the process group ID for the job
   int jid;   // job ID, small positive integer
   int bg;    // is the job running in the background
+  char *cmdline;
 };
 
 // a linked list of jobs
@@ -16,9 +17,15 @@ struct JobList {
 };
 
 // returns JID
-int register_job(struct JobList **, pid_t, int);
+int register_job_in_list(struct JobList **, char *cmdline, pid_t, int);
+
+int register_job(char *, pid_t, int);
 
 // write to the stream
 void write_job_list(struct JobList *, FILE *stream);
 
-int remove_job(struct JobList **, pid_t);
+void write_jobs(FILE *stream);
+
+void remove_job_from_list(struct JobList **, pid_t);
+
+void remove_job(pid_t);

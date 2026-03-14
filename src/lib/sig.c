@@ -1,5 +1,6 @@
 #include "csapp.h"
 #include "fg.h"
+#include "job.h"
 #include <signal.h>
 
 void sigchld_handler(int sig) {
@@ -7,12 +8,13 @@ void sigchld_handler(int sig) {
   pid_t pid;
 
   while ((pid = waitpid(-1, NULL, 0)) > 0) {
-    Sio_puts("child process with pid=");
-    Sio_putl(pid);
+    remove_job(pid);
   }
+
   if (errno != ECHILD) {
     sio_error("waitpid error");
   }
+
   errno = olderrno;
 }
 

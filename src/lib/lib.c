@@ -7,11 +7,11 @@
 #include <string.h>
 #define MAXARGS 128
 
-int builtin_command(char **argv, struct JobList *jobs) {
+int builtin_command(char **argv) {
   if (!strcmp(argv[0], "quit")) {
     exit(0);
   } else if (!strcmp(argv[0], "jobs")) {
-    write_job_list(jobs, stdout);
+    write_jobs(stdout);
     return 1;
   }
   return 0;
@@ -30,18 +30,18 @@ pid_t execute(char **argv) {
   }
 }
 
-void evaluate(char *cmdline, struct JobList **jobs) {
+void evaluate(char *cmdline) {
   char *argv[MAXARGS];
   int bg;
 
   parse_input(cmdline, argv, &bg);
 
-  if (argv[0] == NULL || builtin_command(argv, *jobs)) {
+  if (argv[0] == NULL || builtin_command(argv)) {
     return;
   }
 
   pid_t pid = execute(argv);
-  int jid = register_job(jobs, pid, bg);
+  int jid = register_job(cmdline, pid, bg);
 
   if (!bg) {
     set_fg_pgid(pid);
@@ -56,7 +56,7 @@ void evaluate(char *cmdline, struct JobList **jobs) {
   return;
 }
 
-void read_and_evaluate(char *cmdline, struct JobList **jobs) {
+void read_and_evaluate(char *cmdline) {
   printf(">");
   Fgets(cmdline, MAXLINE, stdin);
 
@@ -64,5 +64,5 @@ void read_and_evaluate(char *cmdline, struct JobList **jobs) {
     exit(0);
   }
 
-  evaluate(cmdline, jobs);
+  evaluate(cmdline);
 }
