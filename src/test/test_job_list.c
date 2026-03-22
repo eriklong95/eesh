@@ -47,6 +47,7 @@ void test_register_jobs() {
   register_job_in_list(&jobs, "/usr/bin/ps", pid, bg);
 
   assert(jobs->head.pid == 13354);
+  assert(!strcmp(jobs->head.cmdline, "/usr/bin/ps"));
   printf(" first job registered correctly\n");
 
   assert(jobs->tail->head.pid == 13355);
@@ -83,6 +84,14 @@ void test_list_jobs() {
   assert(!strcmp(buffer, expected));
 
   free(buffer);
+
+  // check that write_job_list did not change the list
+
+  assert(jobs->head.pid == 13340);
+  assert(!strcmp(jobs->head.cmdline, "/usr/bin/ps"));
+
+  assert(jobs->tail->head.pid == 13341);
+  assert(!strcmp(jobs->head.cmdline, "/usr/bin/ps"));
 
   printf("*** test_list_jobs PASSED ***\n");
 }
