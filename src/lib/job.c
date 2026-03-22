@@ -29,12 +29,11 @@ int next_jid(struct JobList *jobs) {
   return jid + 1;
 }
 
-int register_job(struct JobList **jobs, char *cmdline, pid_t pid, int bg) {
+int register_job(struct JobList **jobs, char *cmdline, pid_t pid) {
   int jid = next_jid(*jobs);
 
   struct Job job;
   job.pid = pid;
-  job.bg = bg;
   job.jid = jid;
   job.cmdline = cmdline;
 

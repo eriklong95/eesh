@@ -20,7 +20,7 @@ struct JobList {
 struct JobList **jobs();
 
 // returns JID
-int register_job(struct JobList **, char *cmdline, pid_t, int);
+int register_job(struct JobList **, char *cmdline, pid_t);
 
 // write to the stream
 void write_jobs(struct JobList *, FILE *stream);

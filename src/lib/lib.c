@@ -41,7 +41,6 @@ void evaluate(char *cmdline, struct JobList **jobs) {
   }
 
   pid_t pid = execute(argv);
-  int jid = register_job(jobs, cmdline, pid, bg);
 
   if (!bg) {
     set_fg_pgid(pid);
@@ -50,6 +49,9 @@ void evaluate(char *cmdline, struct JobList **jobs) {
       unix_error("waitfg: waitpid error");
     }
   } else {
+    char *cmd = Calloc(strlen(cmdline), sizeof(char));
+    strcpy(cmd, cmdline);
+    int jid = register_job(jobs, cmd, pid);
     printf("[%d] %d %s", jid, pid, cmdline);
   }
 

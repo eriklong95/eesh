@@ -14,12 +14,10 @@ void test_remove_job() {
   printf("removing from empty list works\n");
 
   pid_t pid = 13354;
-  int bg = 1;
-  register_job(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid);
 
   pid = 13355;
-  bg = 1;
-  register_job(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid);
 
   remove_job(&jobs, 13354);
 
@@ -35,16 +33,13 @@ void test_register_jobs() {
   struct JobList *jobs = NULL;
 
   pid_t pid = 13354;
-  int bg = 1;
-  register_job(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid);
 
   pid = 13355;
-  bg = 1;
-  register_job(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid);
 
   pid = 13356;
-  bg = 1;
-  register_job(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid);
 
   assert(jobs->head.pid == 13354);
   assert(!strcmp(jobs->head.cmdline, "/usr/bin/ps"));
@@ -64,10 +59,10 @@ void test_list_jobs() {
   struct JobList *jobs = NULL;
 
   pid_t first_pid = 13340;
-  int first_jid = register_job(&jobs, "/usr/bin/ps", first_pid, 1);
+  int first_jid = register_job(&jobs, "/usr/bin/ps", first_pid);
 
   pid_t second_pid = 13341;
-  int second_jid = register_job(&jobs, "/usr/bin/ps", second_pid, 1);
+  int second_jid = register_job(&jobs, "/usr/bin/ps", second_pid);
 
   char *buffer = NULL;
   size_t size = 0;
@@ -101,11 +96,11 @@ void test_jids() {
   struct JobList *jobs = NULL;
 
   pid_t first_pid = 13420;
-  int first_jid = register_job(&jobs, "/usr/bin/ps", first_pid, 1);
+  int first_jid = register_job(&jobs, "/usr/bin/ps", first_pid);
   assert(first_jid == 1);
 
   pid_t second_pid = 13421;
-  int second_jid = register_job(&jobs, "/usr/bin/ps", second_pid, 1);
+  int second_jid = register_job(&jobs, "/usr/bin/ps", second_pid);
   assert(second_jid == 2);
 
   printf("*** test_jids PASSED ***\n");
