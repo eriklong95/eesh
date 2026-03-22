@@ -6,9 +6,10 @@
 void sigchld_handler(int sig) {
   int olderrno = errno;
   pid_t pid;
+  struct JobList **job_list = jobs();
 
   while ((pid = waitpid(-1, NULL, 0)) > 0) {
-    remove_job(pid);
+    remove_job(job_list, pid);
   }
 
   if (errno != ECHILD) {

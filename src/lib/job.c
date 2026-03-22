@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-struct JobList *jobs = NULL;
+struct JobList *job_list = NULL;
+
+struct JobList **jobs() { return &job_list; }
 
 void append(struct JobList **jobs, struct Job job) {
   if (*jobs == NULL) {
@@ -27,8 +29,7 @@ int next_jid(struct JobList *jobs) {
   return jid + 1;
 }
 
-int register_job_in_list(struct JobList **jobs, char *cmdline, pid_t pid,
-                         int bg) {
+int register_job(struct JobList **jobs, char *cmdline, pid_t pid, int bg) {
   int jid = next_jid(*jobs);
 
   struct Job job;
@@ -42,11 +43,7 @@ int register_job_in_list(struct JobList **jobs, char *cmdline, pid_t pid,
   return job.jid;
 }
 
-int register_job(char *cmdline, pid_t pid, int bg) {
-  return register_job_in_list(&jobs, cmdline, pid, bg);
-}
-
-void write_job_list(struct JobList *jobs, FILE *stream) {
+void write_jobs(struct JobList *jobs, FILE *stream) {
   fprintf(stream, "Jobs:\n");
   fprintf(stream, "[JID] PID Command line\n");
   while (jobs != NULL) {
@@ -56,17 +53,13 @@ void write_job_list(struct JobList *jobs, FILE *stream) {
   }
 }
 
-void write_jobs(FILE *stream) { write_job_list(jobs, stream); }
-
-void remove_job_from_list(struct JobList **jobs, pid_t pid) {
+void remove_job(struct JobList **jobs, pid_t pid) {
   if (*jobs == NULL) {
     return;
   } else if ((*jobs)->head.pid == pid) {
     *jobs = (*jobs)->tail;
   } else {
     struct JobList **tail = &(*jobs)->tail;
-    remove_job_from_list(tail, pid);
+    remove_job(tail, pid);
   }
 }
-
-void remove_job(pid_t pid) { remove_job_from_list(&jobs, pid); }

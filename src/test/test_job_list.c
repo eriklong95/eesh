@@ -10,18 +10,18 @@ void test_remove_job() {
 
   struct JobList *jobs = NULL;
 
-  remove_job_from_list(&jobs, 13354);
+  remove_job(&jobs, 13354);
   printf("removing from empty list works\n");
 
   pid_t pid = 13354;
   int bg = 1;
-  register_job_in_list(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid, bg);
 
   pid = 13355;
   bg = 1;
-  register_job_in_list(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid, bg);
 
-  remove_job_from_list(&jobs, 13354);
+  remove_job(&jobs, 13354);
 
   assert(jobs->head.pid == 13355);
   printf("job was removed\n");
@@ -36,15 +36,15 @@ void test_register_jobs() {
 
   pid_t pid = 13354;
   int bg = 1;
-  register_job_in_list(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid, bg);
 
   pid = 13355;
   bg = 1;
-  register_job_in_list(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid, bg);
 
   pid = 13356;
   bg = 1;
-  register_job_in_list(&jobs, "/usr/bin/ps", pid, bg);
+  register_job(&jobs, "/usr/bin/ps", pid, bg);
 
   assert(jobs->head.pid == 13354);
   assert(!strcmp(jobs->head.cmdline, "/usr/bin/ps"));
@@ -64,16 +64,16 @@ void test_list_jobs() {
   struct JobList *jobs = NULL;
 
   pid_t first_pid = 13340;
-  int first_jid = register_job_in_list(&jobs, "/usr/bin/ps", first_pid, 1);
+  int first_jid = register_job(&jobs, "/usr/bin/ps", first_pid, 1);
 
   pid_t second_pid = 13341;
-  int second_jid = register_job_in_list(&jobs, "/usr/bin/ps", second_pid, 1);
+  int second_jid = register_job(&jobs, "/usr/bin/ps", second_pid, 1);
 
   char *buffer = NULL;
   size_t size = 0;
   FILE *stream = open_memstream(&buffer, &size);
 
-  write_job_list(jobs, stream);
+  write_jobs(jobs, stream);
   fclose(stream);
 
   char expected[1024];
@@ -101,11 +101,11 @@ void test_jids() {
   struct JobList *jobs = NULL;
 
   pid_t first_pid = 13420;
-  int first_jid = register_job_in_list(&jobs, "/usr/bin/ps", first_pid, 1);
+  int first_jid = register_job(&jobs, "/usr/bin/ps", first_pid, 1);
   assert(first_jid == 1);
 
   pid_t second_pid = 13421;
-  int second_jid = register_job_in_list(&jobs, "/usr/bin/ps", second_pid, 1);
+  int second_jid = register_job(&jobs, "/usr/bin/ps", second_pid, 1);
   assert(second_jid == 2);
 
   printf("*** test_jids PASSED ***\n");

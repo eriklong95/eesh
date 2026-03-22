@@ -16,16 +16,13 @@ struct JobList {
   struct JobList *tail;
 };
 
-// returns JID
-int register_job_in_list(struct JobList **, char *cmdline, pid_t, int);
+// get the job list
+struct JobList **jobs();
 
-int register_job(char *, pid_t, int);
+// returns JID
+int register_job(struct JobList **, char *cmdline, pid_t, int);
 
 // write to the stream
-void write_job_list(struct JobList *, FILE *stream);
+void write_jobs(struct JobList *, FILE *stream);
 
-void write_jobs(FILE *stream);
-
-void remove_job_from_list(struct JobList **, pid_t);
-
-void remove_job(pid_t);
+void remove_job(struct JobList **, pid_t);
