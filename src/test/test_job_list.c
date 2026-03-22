@@ -10,6 +10,9 @@ void test_remove_job() {
 
   struct JobList *jobs = NULL;
 
+  remove_job_from_list(&jobs, 13354);
+  printf("removing from empty list works\n");
+
   pid_t pid = 13354;
   int bg = 1;
   register_job_in_list(&jobs, "/usr/bin/ps", pid, bg);

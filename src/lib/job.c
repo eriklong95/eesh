@@ -59,7 +59,9 @@ void write_job_list(struct JobList *jobs, FILE *stream) {
 void write_jobs(FILE *stream) { write_job_list(jobs, stream); }
 
 void remove_job_from_list(struct JobList **jobs, pid_t pid) {
-  if ((*jobs)->head.pid == pid) {
+  if (*jobs == NULL) {
+    return;
+  } else if ((*jobs)->head.pid == pid) {
     *jobs = (*jobs)->tail;
   } else {
     struct JobList **tail = &(*jobs)->tail;
