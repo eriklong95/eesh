@@ -4,16 +4,14 @@
 
 struct JobList *jobs = NULL;
 
-struct JobList *append(struct JobList *jobs, struct Job job) {
-  if (jobs == NULL) {
+void append(struct JobList **jobs, struct Job job) {
+  if (*jobs == NULL) {
     struct JobList *end = malloc(sizeof(struct JobList));
     end->head = job;
     end->tail = NULL;
-    return end;
+    *jobs = end;
   } else {
-    jobs->tail = append(jobs->tail, job);
-
-    return jobs;
+    append(&((*jobs)->tail), job);
   }
 }
 
@@ -39,7 +37,7 @@ int register_job_in_list(struct JobList **jobs, char *cmdline, pid_t pid,
   job.jid = jid;
   job.cmdline = cmdline;
 
-  *jobs = append(*jobs, job);
+  append(jobs, job);
 
   return job.jid;
 }
@@ -60,18 +58,13 @@ void write_job_list(struct JobList *jobs, FILE *stream) {
 
 void write_jobs(FILE *stream) { write_job_list(jobs, stream); }
 
-struct JobList *remove_j(struct JobList *jobs, pid_t pid) {
-  if (jobs->head.pid == pid) {
-    return jobs->tail;
-  } else {
-    struct JobList *updated_tail = remove_j(jobs->tail, pid);
-    jobs->tail = updated_tail;
-    return jobs;
-  }
-}
-
 void remove_job_from_list(struct JobList **jobs, pid_t pid) {
-  *jobs = remove_j(*jobs, pid);
+  if ((*jobs)->head.pid == pid) {
+    *jobs = (*jobs)->tail;
+  } else {
+    struct JobList **tail = &(*jobs)->tail;
+    remove_job_from_list(tail, pid);
+  }
 }
 
 void remove_job(pid_t pid) { remove_job_from_list(&jobs, pid); }
