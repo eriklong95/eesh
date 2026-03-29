@@ -3,4 +3,4 @@
 
 int parseline(char *, char **);
 int builtin_command(char **);
-void read_and_evaluate(char *);
+void read_and_evaluate(char *, struct JobList **);

@@ -58,7 +58,7 @@ void evaluate(char *cmdline, struct JobList **jobs) {
   return;
 }
 
-void read_and_evaluate(char *cmdline) {
+void read_and_evaluate(char *cmdline, struct JobList **job_list) {
   printf(">");
   Fgets(cmdline, MAXLINE, stdin);
 
@@ -66,6 +66,5 @@ void read_and_evaluate(char *cmdline) {
     exit(0);
   }
 
-  struct JobList **job_list = jobs();
   evaluate(cmdline, job_list);
 }
