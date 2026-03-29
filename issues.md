@@ -12,7 +12,7 @@ when the error occurs, we don't hit a breakpoint in `register_job_in_list` after
 
 we get a segmentation fault from `remove_job_from_list`
 
-## Are we sure we reap child processes?
+## [RESOLVED] Are we sure we reap child processes?
 
 If the PID of a process is returned by `waitpid, it has been reaped.
 
