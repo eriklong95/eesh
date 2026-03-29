@@ -21,3 +21,15 @@ Idea: comment out reaper code and check what happens
 What does a `Z` value in the `S` column of the output of `ps -l` mean? It is a zombie
 
 it works
+
+## ^C not handled correctly
+
+if user sends a SIGINT to eesh by typing ^C while writing a command -> new prompt
+
+### Step 1: Handle SIGINT from empty command line [DONE]
+
+eesh must have the following behaviour:
+
+1. User starts eesh. eesh prints a `>`
+2. User sends SIGINT by typing ^C
+3. eesh prints a new `>`

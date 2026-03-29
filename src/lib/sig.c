@@ -23,8 +23,10 @@ void sigint_handler(int sig) {
   pid_t fg = get_fg_pgid();
   if (fg != 0) {
     Kill(-fg, SIGINT);
+    Sio_puts("\n");
+  } else {
+    Sio_puts("\n>");
   }
-  Sio_puts("\n");
 }
 
 void sigtstp_handler(int sig) {
