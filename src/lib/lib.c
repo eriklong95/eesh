@@ -59,6 +59,7 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 }
 
 void read_and_evaluate(char *cmdline, struct JobList **job_list) {
+  printf("(read command)\n");
   printf(">");
   Fgets(cmdline, MAXLINE, stdin);
 

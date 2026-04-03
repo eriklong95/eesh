@@ -35,10 +35,9 @@ void sigtstp_handler(int sig) {
     Kill(-fg, SIGTSTP);
     Sio_puts("Stopped ");
     Sio_putl(fg);
-    Sio_puts("\n");
+    Sio_puts("\n>");
     set_fg_pgid(0);
   }
-  Sio_puts("\n");
 }
 
 void install_signal_handlers() {

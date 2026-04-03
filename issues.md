@@ -22,7 +22,7 @@ What does a `Z` value in the `S` column of the output of `ps -l` mean? It is a z
 
 it works
 
-## ^C not handled correctly
+## ^C and ^Z not handled correctly
 
 if user sends a SIGINT to eesh by typing ^C while writing a command -> new prompt
 
@@ -33,3 +33,26 @@ eesh must have the following behaviour:
 1. User starts eesh. eesh prints a `>`
 2. User sends SIGINT by typing ^C
 3. eesh prints a new `>`
+
+### Step 2: Handle SIGTSTP to foreground job
+
+Desired behaviour
+
+1. User types `/usr/bin/sleep 30` in the eesh prompt and hits Enter.
+2. Program starts as foreground job
+3. User sends SIGTSTP to eesh by typing `^Z`
+4. eesh sends SIGTSTP to foreground job
+5. `Stopped ...` is printed
+6. User presented with new prompt
+7. User types `quit` and hits Enter
+8. eesh terminates
+
+How can we verify that a process has received a SIGTSTP? Use `ps -al`, state is `T`
+
+Actually, when the foreground job receives SIGTSTP it should be transformed into a background job!
+
+### Step 3: Handle SIGTSTP while writing cmd
+
+1. User starts eesh. eesh prints a `>`
+2. User sends SIGTSTP by typing ^Z
+3. eesh ignores the signal, ^Z is not even printed
