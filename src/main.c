@@ -1,13 +1,9 @@
-#include "lib/csapp.h"
 #include "lib/lib.h"
+#include "lib/log.h"
+#include "lib/sig.h"
 
 int main() {
-  char cmdline[MAXLINE];
-  struct JobList **job_list = jobs();
-
+  eesh_log_new_session();
   install_signal_handlers();
-
-  while (1) {
-    read_and_evaluate(cmdline, job_list);
-  }
+  run();
 }
