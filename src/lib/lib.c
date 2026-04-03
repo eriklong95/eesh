@@ -2,6 +2,7 @@
 #include "fg.h"
 #include "input.h"
 #include "job.h"
+#include "log.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +10,7 @@
 
 int builtin_command(char **argv, struct JobList **jobs) {
   if (!strcmp(argv[0], "quit")) {
+    eesh_log("Quitting eesh ...\n");
     exit(0);
   } else if (!strcmp(argv[0], "jobs")) {
     write_jobs(*jobs, stdout);
@@ -59,9 +61,10 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 }
 
 void read_and_evaluate(char *cmdline, struct JobList **job_list) {
-  printf("(read command)\n");
   printf(">");
   Fgets(cmdline, MAXLINE, stdin);
+
+  eesh_log("Read command `%s`\n", cmdline);
 
   if (feof(stdin)) {
     exit(0);
