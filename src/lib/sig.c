@@ -1,6 +1,8 @@
 #include "csapp.h"
 #include "fg.h"
 #include "job.h"
+#include "lib.h"
+#include "log.h"
 #include <signal.h>
 
 void sigchld_handler(int sig) {
@@ -30,13 +32,16 @@ void sigint_handler(int sig) {
 }
 
 void sigtstp_handler(int sig) {
+  eesh_log("Handling SIGTSTP\n");
   pid_t fg = get_fg_pgid();
   if (fg != 0) {
+    eesh_log("Sending SIGTSTP to process group %d\n", fg);
     Kill(-fg, SIGTSTP);
     Sio_puts("Stopped ");
     Sio_putl(fg);
-    Sio_puts("\n>");
+    Sio_puts("\n");
     set_fg_pgid(0);
+    run();
   }
 }
 

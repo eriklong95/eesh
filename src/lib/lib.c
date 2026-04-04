@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #define MAXARGS 128
 
 int builtin_command(char **argv, struct JobList **jobs) {
@@ -22,6 +23,7 @@ int builtin_command(char **argv, struct JobList **jobs) {
 pid_t execute(char **argv) {
   pid_t pid = Fork();
   if (pid == 0) {
+    eesh_log("In child process, about to call execve\n");
     setpgid(getpid(), getpid());
     if (execve(argv[0], argv, environ) < 0) {
       printf("%s: Command not found.\n", argv[0]);
@@ -38,9 +40,13 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 
   parse_input(cmdline, argv, &bg);
 
+  eesh_log("Parsed input\n");
+
   if (argv[0] == NULL || builtin_command(argv, jobs)) {
     return;
   }
+
+  eesh_log("Executing command\n");
 
   pid_t pid = execute(argv);
 
@@ -64,11 +70,25 @@ void read_and_evaluate(char *cmdline, struct JobList **job_list) {
   printf(">");
   Fgets(cmdline, MAXLINE, stdin);
 
-  eesh_log("Read command `%s`\n", cmdline);
+  size_t length = strlen(cmdline);
+  char cli[MAXLINE];
+  strncpy(cli, cmdline, length - 1);
+  eesh_log("Read command `%s`\n", cli);
 
   if (feof(stdin)) {
     exit(0);
   }
 
   evaluate(cmdline, job_list);
+}
+
+void run() {
+  char cmdline[MAXLINE];
+  struct JobList **job_list = jobs();
+
+  while (1) {
+    eesh_log("Before read_and_evaluate\n");
+    read_and_evaluate(cmdline, job_list);
+    eesh_log("After read_and_evaluate\n");
+  }
 }

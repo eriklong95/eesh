@@ -3,6 +3,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#ifndef JOB
+#define JOB
+
 struct Job {
   pid_t pid; // the process group ID for the job
   int jid;   // job ID, small positive integer
@@ -26,3 +29,5 @@ int register_job(struct JobList **, char *cmdline, pid_t);
 void write_jobs(struct JobList *, FILE *stream);
 
 void remove_job(struct JobList **, pid_t);
+
+#endif
