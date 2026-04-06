@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <unistd.h>
 #define MAXARGS 128
 
@@ -51,10 +52,21 @@ void evaluate(char *cmdline, struct JobList **jobs) {
   pid_t pid = execute(argv);
 
   if (!bg) {
+    eesh_log("Running program as foreground process\n");
     set_fg_pgid(pid);
     int status;
-    if (waitpid(pid, &status, WUNTRACED) < 0) {
+
+    eesh_log("Will wait for process with PID %d to finish\n", pid);
+    pid_t wait_rv = waitpid(pid, &status, WUNTRACED);
+    eesh_log("Done waiting. Return value was %d\n", wait_rv);
+
+    if (wait_rv < 0) {
+      eesh_log("wait error\n");
       unix_error("waitfg: waitpid error");
+    }
+
+    if (WIFSTOPPED(status)) {
+      eesh_log("Process with PID %d was stopped.\n", wait_rv);
     }
   } else {
     char *cmd = Calloc(strlen(cmdline), sizeof(char));
@@ -68,7 +80,9 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 
 void read_and_evaluate(char *cmdline, struct JobList **job_list) {
   printf(">");
+  eesh_log("will read command line\n");
   Fgets(cmdline, MAXLINE, stdin);
+  eesh_log("read completed\n");
 
   size_t length = strlen(cmdline);
   char cli[MAXLINE];

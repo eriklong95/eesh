@@ -51,8 +51,13 @@ How can we verify that a process has received a SIGTSTP? Use `ps -al`, state is 
 
 Actually, when the foreground job receives SIGTSTP it should be transformed into a background job!
 
+When you `kill -9` the child process manually, you return to a healthy state.
+`kill -20` (SIGTSTP) does not work
+
 ### Step 3: Handle SIGTSTP while writing cmd
 
 1. User starts eesh. eesh prints a `>`
 2. User sends SIGTSTP by typing ^Z
 3. eesh ignores the signal, ^Z is not even printed
+
+### Step 4: Make process appear in job list after it has been stopped

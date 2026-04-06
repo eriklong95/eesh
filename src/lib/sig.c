@@ -22,8 +22,10 @@ void sigchld_handler(int sig) {
 }
 
 void sigint_handler(int sig) {
+  eesh_log("Handling SIGINT\n");
   pid_t fg = get_fg_pgid();
   if (fg != 0) {
+    eesh_log("Sending SIGINT to process group %d\n", fg);
     Kill(-fg, SIGINT);
     Sio_puts("\n");
   } else {
@@ -40,8 +42,8 @@ void sigtstp_handler(int sig) {
     Sio_puts("Stopped ");
     Sio_putl(fg);
     Sio_puts("\n");
+    // we actually need to put it in the job list here
     set_fg_pgid(0);
-    run();
   }
 }
 
