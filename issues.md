@@ -54,6 +54,11 @@ Actually, when the foreground job receives SIGTSTP it should be transformed into
 When you `kill -9` the child process manually, you return to a healthy state.
 `kill -20` (SIGTSTP) does not work
 
+counter program is actually stopped with `kill -20 <pid>` from other terminal. Can we continue? Yes
+
+It seems that we don't enter the signal handler installed in the child process. Is it not installed
+correctly? `execve` changes process
+
 ### Step 3: Handle SIGTSTP while writing cmd
 
 1. User starts eesh. eesh prints a `>`
