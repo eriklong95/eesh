@@ -41,8 +41,6 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 
   parse_input(cmdline, argv, &bg);
 
-  eesh_log("Parsed input\n");
-
   if (argv[0] == NULL || builtin_command(argv, jobs)) {
     return;
   }
@@ -80,9 +78,7 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 
 void read_and_evaluate(char *cmdline, struct JobList **job_list) {
   printf(">");
-  eesh_log("will read command line\n");
   Fgets(cmdline, MAXLINE, stdin);
-  eesh_log("read completed\n");
 
   size_t length = strlen(cmdline);
   char cli[MAXLINE];

@@ -4,15 +4,33 @@
 #include "lib.h"
 #include "log.h"
 #include <signal.h>
+#include <stdlib.h>
 
 void sigchld_handler(int sig) {
   int olderrno = errno;
-  pid_t pid;
+  pid_t pid = 0;
   struct JobList **job_list = jobs();
 
-  while ((pid = waitpid(-1, NULL, 0)) > 0) {
-    remove_job(job_list, pid);
+  eesh_log("Handling SIGCHLD (pid=%d)\n", pid);
+
+  int status;
+  while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
+    eesh_log("Reaped process with PID %d\n", pid);
+    if (WIFEXITED(status)) {
+      eesh_log("Process with PID %d exited with exit code %d\n", pid,
+               WEXITSTATUS(status));
+      remove_job(job_list, pid);
+    } else if (WIFSIGNALED(status)) {
+      eesh_log("Process with PID %d terminated because of uncaught signal %d\n",
+               pid, WTERMSIG(status));
+      remove_job(job_list, pid);
+    } else if (WIFSTOPPED(status)) {
+      eesh_log("Process with PID %d was stopped by signal %d\n", pid,
+               WSTOPSIG(status));
+    }
   }
+
+  eesh_log("After while loop (pid=%d)\n", pid);
 
   if (errno != ECHILD) {
     sio_error("waitpid error");
@@ -28,8 +46,6 @@ void sigint_handler(int sig) {
     eesh_log("Sending SIGINT to process group %d\n", fg);
     Kill(-fg, SIGINT);
     Sio_puts("\n");
-  } else {
-    Sio_puts("\n>");
   }
 }
 
