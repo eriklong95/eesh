@@ -14,7 +14,7 @@ void sigchld_handler(int sig) {
   eesh_log("Handling SIGCHLD (pid=%d)\n", pid);
 
   int status;
-  while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
+  while ((pid = waitpid(-1, &status, WUNTRACED)) > 0) {
     eesh_log("Reaped process with PID %d\n", pid);
     if (WIFEXITED(status)) {
       eesh_log("Process with PID %d exited with exit code %d\n", pid,
@@ -33,6 +33,7 @@ void sigchld_handler(int sig) {
   eesh_log("After while loop (pid=%d)\n", pid);
 
   if (errno != ECHILD) {
+    eesh_log("errno = %d", errno);
     sio_error("waitpid error");
   }
 
