@@ -5,13 +5,14 @@
 #include "log.h"
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 void sigchld_handler(int sig) {
   int olderrno = errno;
   pid_t pid = 0;
   struct JobList **job_list = jobs();
 
-  eesh_log("Handling SIGCHLD (pid=%d)\n", pid);
+  eesh_log("Handling SIGCHLD (my pid = %d)\n", getpid());
 
   int status;
   while ((pid = waitpid(-1, &status, WUNTRACED)) > 0) {

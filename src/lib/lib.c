@@ -3,6 +3,8 @@
 #include "input.h"
 #include "job.h"
 #include "log.h"
+#include <bits/types/sigset_t.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,6 +49,11 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 
   eesh_log("Executing command\n");
 
+  sigset_t mask, prev;
+  Sigemptyset(&mask);
+  Sigaddset(&mask, SIGTSTP);
+
+  Sigprocmask(SIG_BLOCK, &mask, &prev);
   pid_t pid = execute(argv);
 
   if (!bg) {
@@ -55,18 +62,12 @@ void evaluate(char *cmdline, struct JobList **jobs) {
     int status;
 
     eesh_log("Will wait for process with PID %d to finish\n", pid);
-    pid_t wait_rv = waitpid(pid, &status, WUNTRACED);
-    eesh_log("Done waiting. Return value was %d\n", wait_rv);
+    Sigsuspend(&mask);
+    Sigprocmask(SIG_SETMASK, &prev, NULL);
+    eesh_log("Done waiting.\n");
 
-    if (wait_rv < 0) {
-      eesh_log("wait error\n");
-      unix_error("waitfg: waitpid error");
-    }
-
-    if (WIFSTOPPED(status)) {
-      eesh_log("Process with PID %d was stopped.\n", wait_rv);
-    }
   } else {
+    Sigprocmask(SIG_SETMASK, &prev, NULL);
     char *cmd = Calloc(strlen(cmdline), sizeof(char));
     strcpy(cmd, cmdline);
     int jid = register_job(jobs, cmd, pid);
