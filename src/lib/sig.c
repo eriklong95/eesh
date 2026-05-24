@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+static volatile sig_atomic_t child_reaped;
+
 void sigchld_handler(int sig) {
   int olderrno = errno;
   pid_t pid = 0;
@@ -70,3 +72,7 @@ void install_signal_handlers() {
   Signal(SIGINT, sigint_handler);
   Signal(SIGTSTP, sigtstp_handler);
 }
+
+sig_atomic_t get_child_reaped() { return child_reaped; }
+
+void set_child_reaped(sig_atomic_t value) { child_reaped = value; }

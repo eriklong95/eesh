@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #define MAXARGS 128
+#include "sig.h"
 
 int builtin_command(char **argv, struct JobList **jobs) {
   if (!strcmp(argv[0], "quit")) {
@@ -51,7 +52,7 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 
   sigset_t mask, prev;
   Sigemptyset(&mask);
-  Sigaddset(&mask, SIGTSTP);
+  Sigaddset(&mask, SIGCHLD);
 
   Sigprocmask(SIG_BLOCK, &mask, &prev);
   pid_t pid = execute(argv);
@@ -62,7 +63,11 @@ void evaluate(char *cmdline, struct JobList **jobs) {
     int status;
 
     eesh_log("Will wait for process with PID %d to finish\n", pid);
-    Sigsuspend(&mask);
+    set_child_reaped(0);
+    while (get_child_reaped() == 0) {
+      Sigsuspend(&prev);
+    }
+    set_child_reaped(0);
     Sigprocmask(SIG_SETMASK, &prev, NULL);
     eesh_log("Done waiting.\n");
 
