@@ -9,39 +9,37 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-static volatile sig_atomic_t child_reaped;
-
-sig_atomic_t get_child_reaped() {
-  eesh_log("getting child_reaped value = %d\n", child_reaped);
-  return child_reaped;
+void child_terminated(pid_t pid, struct JobList **job_list) {
+  if (pid == get_fg_pgid()) {
+    set_fg_pgid(0);
+  }
+  remove_job(job_list, pid);
 }
 
-void set_child_reaped(sig_atomic_t value) {
-  eesh_log("setting child_repead = %d\n", value);
-  child_reaped = value;
+void child_exited(pid_t pid, int status, struct JobList **job_list) {
+  eesh_log("Process with PID %d exited with exit code %d. The process has been "
+           "reaped.\n",
+           pid, WEXITSTATUS(status));
+  child_terminated(pid, job_list);
 }
 
-int fg_stopped(int sig) {
-  int status;
-  pid_t fg_pid = get_fg_pgid();
-  eesh_log("checking if foreground job %d was stopped\n", fg_pid);
+void child_signaled(pid_t pid, int status, struct JobList **job_list) {
+  eesh_log("Process with PID %d terminated because of uncaught signal %d. "
+           "The process has been reaped.\n",
+           pid, WTERMSIG(status));
+  child_terminated(pid, job_list);
+}
 
-  pid_t pid = waitpid(fg_pid, &status, WNOHANG | WUNTRACED);
-  if (pid > 0) {
-    if (WIFSTOPPED(status)) {
-      eesh_log("Process with PID %d was stopped by signal %d\n", pid,
-               WSTOPSIG(status));
-      return 1;
-    } else {
-      eesh_log("Waitpid returned with %d but not stopped\n", pid);
-      return 0;
-    }
-  } else if (pid == 0) {
-    eesh_log("No child has stopped or terminated\n");
-    return 0;
-  } else {
-    sio_error("waitpid error");
-    return 0;
+void child_stopped(pid_t pid, int status) {
+  eesh_log("Process with PID %d was stopped by signal %d\n", pid,
+           WSTOPSIG(status));
+  pid_t fg_pgid = get_fg_pgid();
+  if (pid == fg_pgid) {
+    eesh_log(
+        "Foreground process (PID=%d) stopped. Removing it as foreground job.\n",
+        fg_pgid);
+    set_fg_pgid(0);
+    // put in job list
   }
 }
 
@@ -50,37 +48,28 @@ void sigchld_handler(int sig) {
   pid_t pid = 0;
   struct JobList **job_list = jobs();
 
-  eesh_log("Handling SIGCHLD\n");
-
-  if (fg_stopped(sig)) {
-    set_child_reaped(1);
-    return;
-  }
+  eesh_log("Handling SIGCHLD.\n");
 
   int status;
-  while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
-    set_child_reaped(1);
-    eesh_log("Waitpid returned with %d\n", pid);
+  pid_t wait_set = -1;
+  while ((pid = waitpid(wait_set, &status, WNOHANG | WUNTRACED)) > 0) {
+    eesh_log("Waiting with wait set %d returned with %d.\n", wait_set, pid);
     if (WIFEXITED(status)) {
-      eesh_log("Process with PID %d exited with exit code %d. Reaped\n", pid,
-               WEXITSTATUS(status));
-      remove_job(job_list, pid);
+      child_exited(pid, status, job_list);
     } else if (WIFSIGNALED(status)) {
-      eesh_log("Process with PID %d terminated because of uncaught signal %d. "
-               "Reaped\n",
-               pid, WTERMSIG(status));
-      remove_job(job_list, pid);
+      child_signaled(pid, status, job_list);
     } else if (WIFSTOPPED(status)) {
-      eesh_log("Process with PID %d was stopped by signal %d\n", pid,
-               WSTOPSIG(status));
+      child_stopped(pid, status);
+    } else {
+      sio_error("unsupported status\n");
     }
   }
 
-  eesh_log("After while loop (pid=%d)\n", pid);
-
-  if (errno != ECHILD) {
+  if (!WIFSTOPPED(status) && errno != ECHILD) {
     eesh_log("errno = %d", errno);
     sio_error("waitpid error");
+  } else {
+    eesh_log("No more processes to wait for.\n", pid);
   }
 
   errno = olderrno;

@@ -25,16 +25,22 @@ int builtin_command(char **argv, struct JobList **jobs) {
 }
 
 pid_t execute(char **argv) {
+  eesh_log("Forking child process to run program.\n");
   pid_t pid = Fork();
   if (pid == 0) {
-    eesh_log("In child process, about to call execve\n");
-    setpgid(getpid(), getpid());
+    pid_t child_pid = getpid();
+    eesh_log("This process was forked to run program. Setting process group ID "
+             "to %d.\n",
+             child_pid);
+    setpgid(child_pid, child_pid);
+    eesh_log("Calling execve to run program in this process.\n");
     if (execve(argv[0], argv, environ) < 0) {
       printf("%s: Command not found.\n", argv[0]);
       exit(0);
     }
   } else {
-    eesh_log("In parent process, returning %d\n", pid);
+    eesh_log("Process with PID %d forked from this process to run program.\n",
+             pid);
     return pid;
   }
 }
@@ -49,7 +55,7 @@ void evaluate(char *cmdline, struct JobList **jobs) {
     return;
   }
 
-  eesh_log("Executing command\n");
+  eesh_log("Executing command.\n");
 
   sigset_t mask, prev;
   Sigemptyset(&mask);
@@ -59,19 +65,17 @@ void evaluate(char *cmdline, struct JobList **jobs) {
   pid_t pid = execute(argv);
 
   if (!bg) {
-    eesh_log("Running program as foreground process\n");
+    eesh_log("Running program as foreground process.\n");
     set_fg_pgid(pid);
     int status;
 
-    eesh_log("Will wait for process with PID %d to finish\n", pid);
-    set_child_reaped(0);
-    while (get_child_reaped() == 0) {
-      eesh_log("while waiting in main program: before Sigsuspend\n");
+    eesh_log("Waiting for process with PID %d to stop or terminate.\n", pid);
+
+    while (get_fg_pgid() > 0) { // wait for foreground job to stop or terminate
+      eesh_log("Suspending to wait for signal.\n");
       Sigsuspend(&prev);
-      eesh_log("while waiting in main program: after Sigsuspend\n");
+      eesh_log("Signal handled.\n");
     }
-    set_child_reaped(0);
-    set_fg_pgid(0);
     Sigprocmask(SIG_SETMASK, &prev, NULL);
     eesh_log("Done waiting.\n");
 
@@ -88,6 +92,8 @@ void evaluate(char *cmdline, struct JobList **jobs) {
 
 void read_and_evaluate(char *cmdline, struct JobList **job_list) {
   printf(">");
+
+  eesh_log("Reading command.\n");
   Fgets(cmdline, MAXLINE, stdin);
 
   size_t length = strlen(cmdline);
@@ -107,8 +113,7 @@ void run() {
   struct JobList **job_list = jobs();
 
   while (1) {
-    eesh_log("Before read_and_evaluate\n");
     read_and_evaluate(cmdline, job_list);
-    eesh_log("After read_and_evaluate\n");
+    eesh_log("Done processing command.\n");
   }
 }

@@ -81,3 +81,35 @@ correctly? `execve` changes process
 3. eesh ignores the signal, ^Z is not even printed
 
 ### Step 4: Make process appear in job list after it has been stopped
+
+## Better structure for the SIGCHLD handler [DONE]
+
+The handler is called both for stopped and terminated child processes. The code for those
+two cases should be separated somehow.
+
+The handler communicates with the main program via a flag. What should we call that flag?
+
+What are the different cases where the handler is called, and what should happen in each of
+those cases?
+- SIGCHLD "from" terminated child process: reap child process
+- SIGCHLD "from" stopped child process: if that is the foreground process, add it to the job list
+
+algorithm:
+- first handle all stopped processes. We have to remember that also background processes can be stopped
+
+The `errno != ECHLD` should only happen in the branch for terminated processes.
+
+The SIGCHLD handler takes care of controlling job list. SIGTSTP handler and SIGINT handler just
+sends signal to child process.
+
+## Make global foreground process group ID volatile
+
+first produce a scenario with error
+
+## Job list improvements
+
+view stopped foreground job in job list. What does bash do?
+
+## Command string buffer
+
+strange logs of the command being read.
