@@ -35,7 +35,7 @@ Questions:
 Last debug log statement is from SIGCHLD handler. 
 
 The problem was that the `child_reaped` was not set in the SIGCHLD handler.
-Solved in this commit a3f0ff103cad8b1e9c7526abca8b0c5141a649dd.
+Solved in this commit 132d976e50f443220e5f82f1e5507c0b8346bdda.
 
 ## ^C and ^Z not handled correctly
 
