@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
 
 void child_terminated(pid_t pid, struct JobList **job_list) {
@@ -30,16 +31,20 @@ void child_signaled(pid_t pid, int status, struct JobList **job_list) {
   child_terminated(pid, job_list);
 }
 
-void child_stopped(pid_t pid, int status) {
+void fg_stopped(pid_t pid, struct JobList **job_list) {
+  eesh_log(
+      "Foreground process (PID=%d) stopped. Removing it as foreground job.\n",
+      pid);
+  set_fg_pgid(0);
+  register_job(job_list, "", pid);
+}
+
+void child_stopped(pid_t pid, int status, struct JobList **job_list) {
   eesh_log("Process with PID %d was stopped by signal %d\n", pid,
            WSTOPSIG(status));
   pid_t fg_pgid = get_fg_pgid();
   if (pid == fg_pgid) {
-    eesh_log(
-        "Foreground process (PID=%d) stopped. Removing it as foreground job.\n",
-        fg_pgid);
-    set_fg_pgid(0);
-    // put in job list
+    fg_stopped(pid, job_list);
   }
 }
 
@@ -59,7 +64,7 @@ void sigchld_handler(int sig) {
     } else if (WIFSIGNALED(status)) {
       child_signaled(pid, status, job_list);
     } else if (WIFSTOPPED(status)) {
-      child_stopped(pid, status);
+      child_stopped(pid, status, job_list);
     } else {
       sio_error("unsupported status\n");
     }

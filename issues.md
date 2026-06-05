@@ -110,6 +110,18 @@ first produce a scenario with error
 
 view stopped foreground job in job list. What does bash do?
 
+### Show stopped foreground job in job list [DONE]
+
+The following must be supported:
+- A program is run as a foreground job.
+- It is stopped with ^Z.
+- The user is presented with a new prompt.
+- Running `jobs` shows the stopped foreground job in the job list with job ID equal to 1+ the highest ID before the job was started.
+
+### Show command line for stopped job in job list
+
+### Show status for jobs in job list
+
 ## Command string buffer
 
 strange logs of the command being read.
