@@ -34,6 +34,7 @@ pid_t execute(char **argv) {
       exit(0);
     }
   } else {
+    eesh_log("In parent process, returning %d\n", pid);
     return pid;
   }
 }
@@ -70,6 +71,7 @@ void evaluate(char *cmdline, struct JobList **jobs) {
       eesh_log("while waiting in main program: after Sigsuspend\n");
     }
     set_child_reaped(0);
+    set_fg_pgid(0);
     Sigprocmask(SIG_SETMASK, &prev, NULL);
     eesh_log("Done waiting.\n");
 

@@ -5,6 +5,8 @@
 #include "log.h"
 #include <signal.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 static volatile sig_atomic_t child_reaped;
@@ -19,23 +21,53 @@ void set_child_reaped(sig_atomic_t value) {
   child_reaped = value;
 }
 
+int fg_stopped(int sig) {
+  int status;
+  pid_t fg_pid = get_fg_pgid();
+  eesh_log("checking if foreground job %d was stopped\n", fg_pid);
+
+  pid_t pid = waitpid(fg_pid, &status, WNOHANG | WUNTRACED);
+  if (pid > 0) {
+    if (WIFSTOPPED(status)) {
+      eesh_log("Process with PID %d was stopped by signal %d\n", pid,
+               WSTOPSIG(status));
+      return 1;
+    } else {
+      eesh_log("Waitpid returned with %d but not stopped\n", pid);
+      return 0;
+    }
+  } else if (pid == 0) {
+    eesh_log("No child has stopped or terminated\n");
+    return 0;
+  } else {
+    sio_error("waitpid error");
+    return 0;
+  }
+}
+
 void sigchld_handler(int sig) {
   int olderrno = errno;
   pid_t pid = 0;
   struct JobList **job_list = jobs();
 
-  eesh_log("Handling SIGCHLD\n", getpid());
+  eesh_log("Handling SIGCHLD\n");
+
+  if (fg_stopped(sig)) {
+    set_child_reaped(1);
+    return;
+  }
 
   int status;
-  while ((pid = waitpid(-1, &status, WUNTRACED)) > 0) {
+  while ((pid = waitpid(-1, &status, WNOHANG | WUNTRACED)) > 0) {
     set_child_reaped(1);
-    eesh_log("Reaped process with PID %d\n", pid);
+    eesh_log("Waitpid returned with %d\n", pid);
     if (WIFEXITED(status)) {
-      eesh_log("Process with PID %d exited with exit code %d\n", pid,
+      eesh_log("Process with PID %d exited with exit code %d. Reaped\n", pid,
                WEXITSTATUS(status));
       remove_job(job_list, pid);
     } else if (WIFSIGNALED(status)) {
-      eesh_log("Process with PID %d terminated because of uncaught signal %d\n",
+      eesh_log("Process with PID %d terminated because of uncaught signal %d. "
+               "Reaped\n",
                pid, WTERMSIG(status));
       remove_job(job_list, pid);
     } else if (WIFSTOPPED(status)) {
@@ -73,8 +105,6 @@ void sigtstp_handler(int sig) {
     Sio_puts("Stopped ");
     Sio_putl(fg);
     Sio_puts("\n");
-    // we actually need to put it in the job list here
-    set_fg_pgid(0);
   }
 }
 

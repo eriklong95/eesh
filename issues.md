@@ -49,7 +49,7 @@ eesh must have the following behaviour:
 2. User sends SIGINT by typing ^C
 3. eesh prints a new `>`
 
-### Step 2: Handle SIGTSTP to foreground job
+### Step 2: Handle SIGTSTP to foreground job [DONE]
 
 Desired behaviour
 
