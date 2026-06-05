@@ -23,3 +23,9 @@ void eesh_log(const char *restrict __format, ...) {
   Write(log_fd, log_line, strlen(log_line));
   Close(log_fd);
 }
+
+void eesh_log_new_session() {
+  eesh_log("-----------------------------------------------\n");
+  eesh_log("----------------- New session -----------------\n");
+  eesh_log("-----------------------------------------------\n");
+}

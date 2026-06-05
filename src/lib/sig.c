@@ -24,7 +24,7 @@ void sigchld_handler(int sig) {
   pid_t pid = 0;
   struct JobList **job_list = jobs();
 
-  eesh_log("Handling SIGCHLD (my pid = %d)\n", getpid());
+  eesh_log("Handling SIGCHLD\n", getpid());
 
   int status;
   while ((pid = waitpid(-1, &status, WUNTRACED)) > 0) {
