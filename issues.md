@@ -22,6 +22,21 @@ What does a `Z` value in the `S` column of the output of `ps -l` mean? It is a z
 
 it works
 
+## [RESOLVED] Running `ps -l` fails to return to prompt
+
+Steps to reproduce:
+- From the `eesh` command line, run `/usr/bin/ps -l`
+- The output is printed, but the program does not return to the state where it waits for new input.
+- Expected: After the output from `ps`, a `>` is printed and the user can enter a new command and execute it.
+
+Questions:
+- Does this happen for all command or just `ps -l`? `ps` also doesn't work and `ls` also fails. It is probably a general issue.
+
+Last debug log statement is from SIGCHLD handler. 
+
+The problem was that the `child_reaped` was not set in the SIGCHLD handler.
+Solved in this commit a3f0ff103cad8b1e9c7526abca8b0c5141a649dd.
+
 ## ^C and ^Z not handled correctly
 
 if user sends a SIGINT to eesh by typing ^C while writing a command -> new prompt

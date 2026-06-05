@@ -9,6 +9,16 @@
 
 static volatile sig_atomic_t child_reaped;
 
+sig_atomic_t get_child_reaped() {
+  eesh_log("getting child_reaped value = %d\n", child_reaped);
+  return child_reaped;
+}
+
+void set_child_reaped(sig_atomic_t value) {
+  eesh_log("setting child_repead = %d\n", value);
+  child_reaped = value;
+}
+
 void sigchld_handler(int sig) {
   int olderrno = errno;
   pid_t pid = 0;
@@ -18,6 +28,7 @@ void sigchld_handler(int sig) {
 
   int status;
   while ((pid = waitpid(-1, &status, WUNTRACED)) > 0) {
+    set_child_reaped(1);
     eesh_log("Reaped process with PID %d\n", pid);
     if (WIFEXITED(status)) {
       eesh_log("Process with PID %d exited with exit code %d\n", pid,
@@ -72,7 +83,3 @@ void install_signal_handlers() {
   Signal(SIGINT, sigint_handler);
   Signal(SIGTSTP, sigtstp_handler);
 }
-
-sig_atomic_t get_child_reaped() { return child_reaped; }
-
-void set_child_reaped(sig_atomic_t value) { child_reaped = value; }

@@ -65,7 +65,9 @@ void evaluate(char *cmdline, struct JobList **jobs) {
     eesh_log("Will wait for process with PID %d to finish\n", pid);
     set_child_reaped(0);
     while (get_child_reaped() == 0) {
+      eesh_log("while waiting in main program: before Sigsuspend\n");
       Sigsuspend(&prev);
+      eesh_log("while waiting in main program: after Sigsuspend\n");
     }
     set_child_reaped(0);
     Sigprocmask(SIG_SETMASK, &prev, NULL);
