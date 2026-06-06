@@ -24,6 +24,9 @@ int builtin_command(char **argv, struct JobList **jobs) {
   } else if (!strcmp(argv[0], "bg")) {
     bg(argv[1], *jobs);
     return 1;
+  } else if (!strcmp(argv[0], "fg")) {
+    fg(argv[1], *jobs);
+    return 1;
   }
   return 0;
 }

@@ -117,9 +117,22 @@ Support the following
 - User enters `bg <JID>`. Program is restarted (send SIGCONT)
 - We can see output from program
 
+### `fg`
+
+- User runs a job in the background
+- User enters ^Z. Program is stopped
+- User enter `fg <JID>`. Program is restarted, now running in foreground
+
+What does it mean that a job is running in the foreground?
+- User cannot enter new command
+- Shell is waiting for the job to terminate
+- User can enter a new command after job has finished
+
 ## Job list improvements
 
 view stopped foreground job in job list. What does bash do?
+
+if job is stopped, then restarted, then stopped again, it appears twice in the job list
 
 ### Show stopped foreground job in job list [DONE]
 

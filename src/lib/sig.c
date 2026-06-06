@@ -51,6 +51,8 @@ void child_stopped(pid_t pid, int status, struct JobList **job_list) {
 
 void child_continued(pid_t pid) {
   eesh_log("Process with PID %d was restarted by receipt of SIGCONT\n", pid);
+  // if this was `fg` (fg_pgid = pid), then move to foreground
+  // otherwise update status in job list
 }
 
 void sigchld_handler(int sig) {
@@ -89,10 +91,10 @@ void sigchld_handler(int sig) {
 }
 
 void sigint_handler(int sig) {
-  eesh_log("Handling SIGINT\n");
+  eesh_log("Handling SIGINT.\n");
   pid_t fg = get_fg_pgid();
   if (fg != 0) {
-    eesh_log("Sending SIGINT to process group %d\n", fg);
+    eesh_log("Sending SIGINT to process group %d.\n", fg);
     Kill(-fg, SIGINT);
     Sio_puts("\n");
   }
@@ -102,7 +104,7 @@ void sigtstp_handler(int sig) {
   eesh_log("Handling SIGTSTP\n");
   pid_t fg = get_fg_pgid();
   if (fg != 0) {
-    eesh_log("Sending SIGTSTP to process group %d\n", fg);
+    eesh_log("Sending SIGTSTP to process group %d.\n", fg);
     Kill(-fg, SIGTSTP);
     Sio_puts("Stopped ");
     Sio_putl(fg);

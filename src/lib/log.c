@@ -19,7 +19,8 @@ void eesh_log(const char *restrict __format, ...) {
   vsprintf(log_message, __format, args);
   va_end(args);
 
-  sprintf(log_line, "[%d] %s", getpid(), log_message);
+  sprintf(log_line, "[%d] [%s:%d] %s", getpid(), __FILE_NAME__, __LINE__,
+          log_message);
   Write(log_fd, log_line, strlen(log_line));
   Close(log_fd);
 }
