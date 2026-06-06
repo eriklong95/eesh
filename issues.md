@@ -106,6 +106,17 @@ sends signal to child process.
 
 first produce a scenario with error
 
+## Built-in commands
+
+### `bg` [DONE]
+
+Support the following
+
+- User runs program in foreground
+- User enter ^Z. Program is stopped
+- User enters `bg <JID>`. Program is restarted (send SIGCONT)
+- We can see output from program
+
 ## Job list improvements
 
 view stopped foreground job in job list. What does bash do?

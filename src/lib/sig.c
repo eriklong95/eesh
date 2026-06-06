@@ -5,6 +5,7 @@
 #include "log.h"
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
@@ -48,6 +49,10 @@ void child_stopped(pid_t pid, int status, struct JobList **job_list) {
   }
 }
 
+void child_continued(pid_t pid) {
+  eesh_log("Process with PID %d was restarted by receipt of SIGCONT\n", pid);
+}
+
 void sigchld_handler(int sig) {
   int olderrno = errno;
   pid_t pid = 0;
@@ -57,7 +62,8 @@ void sigchld_handler(int sig) {
 
   int status;
   pid_t wait_set = -1;
-  while ((pid = waitpid(wait_set, &status, WNOHANG | WUNTRACED)) > 0) {
+  while ((pid = waitpid(wait_set, &status, WNOHANG | WUNTRACED | WCONTINUED)) >
+         0) {
     eesh_log("Waiting with wait set %d returned with %d.\n", wait_set, pid);
     if (WIFEXITED(status)) {
       child_exited(pid, status, job_list);
@@ -65,13 +71,15 @@ void sigchld_handler(int sig) {
       child_signaled(pid, status, job_list);
     } else if (WIFSTOPPED(status)) {
       child_stopped(pid, status, job_list);
+    } else if (WIFCONTINUED(status)) {
+      child_continued(pid);
     } else {
       sio_error("unsupported status\n");
     }
   }
 
-  if (!WIFSTOPPED(status) && errno != ECHILD) {
-    eesh_log("errno = %d", errno);
+  if (!WIFCONTINUED(status) && !WIFSTOPPED(status) && errno != ECHILD) {
+    eesh_log("Error %d: %s\n", errno, strerror(errno));
     sio_error("waitpid error");
   } else {
     eesh_log("No more processes to wait for.\n", pid);

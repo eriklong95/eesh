@@ -62,3 +62,14 @@ void remove_job(struct JobList **jobs, pid_t pid) {
     remove_job(tail, pid);
   }
 }
+
+struct JobList *find_by_jid(struct JobList *jobs, int jid) {
+  struct JobList *job_list = jobs;
+  while (job_list != NULL) {
+    if (job_list->head.jid == jid) {
+      return job_list;
+    }
+    job_list = job_list->tail;
+  }
+  return job_list;
+}

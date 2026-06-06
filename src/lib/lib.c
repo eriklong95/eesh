@@ -11,14 +11,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 #define MAXARGS 128
+#include "builtin.h"
 #include "sig.h"
 
 int builtin_command(char **argv, struct JobList **jobs) {
   if (!strcmp(argv[0], "quit")) {
-    eesh_log("Quitting eesh ...\n");
+    prepare_quit();
     exit(0);
   } else if (!strcmp(argv[0], "jobs")) {
-    write_jobs(*jobs, stdout);
+    list_jobs(*jobs);
+    return 1;
+  } else if (!strcmp(argv[0], "bg")) {
+    bg(argv[1], *jobs);
     return 1;
   }
   return 0;

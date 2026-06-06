@@ -30,4 +30,7 @@ void write_jobs(struct JobList *, FILE *stream);
 
 void remove_job(struct JobList **, pid_t);
 
+// returns a pointer to the job or NULL if not found
+struct JobList *find_by_jid(struct JobList *, int);
+
 #endif

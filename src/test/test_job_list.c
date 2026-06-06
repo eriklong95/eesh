@@ -106,9 +106,33 @@ void test_jids() {
   printf("*** test_jids PASSED ***\n");
 }
 
+void test_find() {
+  printf("*** test_find STARTED ***\n");
+  struct JobList *jobs = NULL;
+
+  pid_t first_pid = 13420;
+  int first_jid = register_job(&jobs, "/usr/bin/ps", first_pid);
+  assert(first_jid == 1);
+
+  pid_t second_pid = 13421;
+  int second_jid = register_job(&jobs, "/usr/bin/ps", second_pid);
+  assert(second_jid == 2);
+
+  struct JobList *jobp;
+
+  jobp = find_by_jid(jobs, 1);
+  assert(jobp->head.pid == 13420);
+
+  jobp = find_by_jid(jobs, 3);
+  assert(jobp == NULL);
+
+  printf("*** test_find PASSED ***\n");
+}
+
 int main() {
   test_remove_job();
   test_register_jobs();
   test_list_jobs();
   test_jids();
+  test_find();
 }
